@@ -8,7 +8,10 @@ class Player {
   }
 
   pray_for_goops() {
-    this.receive_goop(new Goop());
+    // Player has a 50% chance to receive a generic goop.
+    if (random_chance(0.5)) {
+      this.receive_goop(new Goop());
+    }
   }
 
   receive_goop(goop) {
@@ -27,6 +30,14 @@ class Player {
 class Goop {
   constructor() {
     this.name = 'goop';
+  }
+}
+
+function random_chance(probability) {
+  if (probability > Math.random()) {
+    return true;
+  } else {
+    return false;
   }
 }
 
