@@ -1,8 +1,52 @@
-const MINOS = [
-  'mana',
-  'hydrogen',
-  'oxygen'
-]
+//const MINOS = [
+//  'mana',
+//  'hydrogen',
+//  'oxygen'
+//]
+
+class Mino {
+  static name = 'mino';
+  static color = 'gray';
+  static commonality = 1;
+  static dominance = 1;
+}
+
+class Mana extends Mino {
+  static name = 'mana';
+  static color = 'white';
+  static commonality = 1;
+  static dominance = 3;
+}
+
+class Hydrogen extends Mino {
+  static name = 'hydrogen';
+  static color = 'blue';
+  static commonality = 2;
+  static dominance = 2;
+}
+
+class Oxygen extends Mino {
+  static name = 'oxygen';
+  static color = 'green';
+  static commonality = 3;
+  static dominance = 1;
+}
+
+// Don't know of a way to gather all class definitions other than to use a 
+// lookup table (other than to resort to eval)
+const LOOKUPS = {
+  'minos' : {
+    'mana'      : Mana,
+    'hydrogen'  : Hydrogen,
+    'oxygen'    : Oxygen
+  }
+}
+
+//const MINO_CLASS_TABLE = {
+//  'mana'  : Mana,
+//  'hydrogen'  : Hydrogen,
+//  'oxygen'    : Oxygen
+//}
 
 // Define a class to represent the player object.
 class Player {
@@ -24,81 +68,13 @@ class Player {
   }
 
   check_skills() {
-    // If goopology is above 0, switch visible goop info tiers
-    //var tier0_elements = document.getElementsByClassName('goopology_understanding_tier_0');
-    //var tier1_elements = document.getElementsByClassName('goopology_understanding_tier_1');
-
-    //for (var i=0; i < tier0_elements.length; i++) {
-    //  if (player.skills['goopology'] <= 0) {
-    //    //tier0_elements[i].setAttribute('display', 'block');
-    //    document.getElementById(tier0_elements[i]).style.display = 'block';
-    //  } else {
-    //    //tier0_elements[i].setAttribute('display', 'none');
-    //    document.getElementById(tier0_elements[i]).style.display = 'none';
-    //  }
-    //}
-
-    //for (var i=0; i < tier1_elements.length; i++) {
-    //  if (player.skills['goopology'] >= 1) {
-    //    //tier1_elements[i].setAttribute('display', 'block');
-    //    document.getElementById(tier1_elements[i]).style.display = 'block';
-    //  } else {
-    //    //tier1_elements[i].setAttribute('display', 'none');
-    //    document.getElementById(tier1_elements[i]).style.display = 'none';
-    //  }
-    //}
-
-
-    //for (var i=0; i < document.getElementsByClassName('goopology_understanding_tier_0').length; i++) {
-    //  if (player.skills['goopology'] <= 0) {
-    //    document.getElementsByClassName('goopology_understanding_tier_0')[i].setAttribute('display', 'block');
-    //    //document.getElementsByClassName('goopology_understanding_tier_1')[i].setAttribute('display', 'none');
-    //  }
-    //  if (player.skills['goopology'] >= 1) {
-    //    document.getElementsByClassName('goopology_understanding_tier_0')[i].setAttribute('display', 'none');
-    //    //document.getElementsByClassName('goopology_understanding_tier_1')[i].setAttribute('display', 'block');
-    //  }
-    //}
-
-    //for (var i=0; i < document.getElementsByClassName('goopology_understanding_tier_1').length; i++) {
-    //  if (player.skills['goopology'] <= 0) {
-    //    //document.getElementsByClassName('goopology_understanding_tier_0')[i].setAttribute('display', 'block');
-    //    document.getElementsByClassName('goopology_understanding_tier_1')[i].setAttribute('display', 'none');
-    //  }
-    //  if (player.skills['goopology'] >= 1) {
-    //    //document.getElementsByClassName('goopology_understanding_tier_0')[i].setAttribute('display', 'none');
-    //    document.getElementsByClassName('goopology_understanding_tier_1')[i].setAttribute('display', 'block');
-    //  }
-    //}
-
-
-      //$('.goopology_understanding_tier_0').show();
-      //$('.goopology_understanding_tier_0').toggle(true);
-      
-      //$('.goopology_understanding_tier_1').hide();
-      //$('.goopology_understanding_tier_1').toggle(false);
-      //document.getElementsByClassName('goopology_understanding_tier_1').setAttribute('display', 'none');
-    //} else if (player.skills['goopology'] >= 1) {
-      //$('.goopology_understanding_tier_0').hide();
-      //$('.goopology_understanding_tier_1').show();
-      //$('.goopology_understanding_tier_0').toggle(false);
-      //$('.goopology_understanding_tier_1').toggle(true);
-      //document.getElementsByClassName('goopology_understanding_tier_0').setAttribute('display', 'none');
-      //document.getElementsByClassName('goopology_understanding_tier_1').setAttribute('display', 'block');
-    //}
 
     if (player.skills['goopology'] <= 0) {
-      //$('.goopology_understanding_tier_0').toggle(true);
-      //$('.goopology_understanding_tier_1').toggle(false);
       $('#goopology_understanding_tier_0_stats_div').toggle(true);
       $('#goopology_understanding_tier_1_stats_div').toggle(false);
-      //$('.goopology_understanding_tier_0').show();
-      //$('.goopology_understanding_tier_0').hide();
     } else if (player.skills['goopology'] >= 1) {
       $('#goopology_understanding_tier_0_stats_div').toggle(false);
       $('#goopology_understanding_tier_1_stats_div').toggle(true);
-      //$('.goopology_understanding_tier_0').hide();
-      //$('.goopology_understanding_tier_0').show();
     }
   }
 
@@ -109,15 +85,20 @@ class Player {
     }
   }
 
+  pray_for_all_goops_death() {
+    // Has a 10% chance of killing (harvesting) all goops.
+    if (random_chance(0.1)) {
+      console.log('not implemented: harvesting all goops');
+    }
+  }
+
   receive_goop(goop) {
     this.inventory['goops'].push(goop);
-    //document.getElementById('player_inventory_goop_count').innerHTML = this.goop_count;
     this.update_goop_counts();
   }
 
   update_goop_counts() {
     var count = {
-      //'total' : this.inventory['goops'].length,
       'white' : 0,
       'blue'  : 0,
       'red'   : 0,
@@ -129,57 +110,22 @@ class Player {
       'oxygen'    : 0
     };
     for (var i = 0; i < this.inventory['goops'].length; i++) {
-
       var goop = this.inventory['goops'][i]
-
       // Tally each different color goop
       count[goop.color] += 1;
-
-      // Count by composition if player is skilled enough
-      //if (player.skills['goopology'] >= 1) {
-        // Handle composition
-        //if (goop.composition['mana'] == 1) {
-        //  count['mana'] += 1;
-        //}
-        //if (goop.composition['hydrogen'] == 1) {
-        //  count['hydrogen'] += 1;
-        //}
-        //if (goop.composition['oxygen'] == 1) {
-        //  count['oxygen'] += 1;
-        //}
-
+      // Tally each goop by chemical type
       count[goop.chemical_type] += 1;
-
-
-
-      //}
-      //} else {
-      //  console.log(`ERROR: Goop with non-1 mana count found! Count: <${goop.composition['mana']}`);
-      //}
-
     }
-
-    
 
     for (const [index, [key, value]] of Object.entries(Object.entries(count))) {
       console.log(`Got <${key}>:<${value}> when populating document.`);
-
       // Create matching document elements if they don't exist
-      //if ($('#unique-selector').length === 0) {
       var element_id = String(`player_inventory_${key}_goop_count`);
-      if ($(`#${element_id}`).length === 0) {
-
-        
+      if ($(`#${element_id}`).length === 0) { 
         console.log(`Creating element: <${element_id}>`)
         let element = document.createElement(element_id);
-        //var para = document.createElement('p');
-        //var text_node = document.createTextNode(`You have <span id='player_inventory_${key}_goop_count'></span> ${key} goops`);
-        //document.getElementById(element_id).innerHTML = `You have <span id='player_inventory_${key}_goop_count'></span> ${key} goops`;
         element.innerHTML = `You have <span id='player_inventory_${key}_goop_count'></span> ${key} goops`;
-        //document.getElementById(element_id).setAttribute('class', 'goopology_understanding_tier_0');
         element.setAttribute('id', `player_inventory_${key}_goop_count_p`);
-        //element.setAttribute('display', 'block');
-
         let colors = [
           'white',
           'blue',
@@ -204,7 +150,6 @@ class Player {
           var div = document.getElementById('goopology_understanding_tier_0_stats_div');
         }
 
-        //let div = document.getElementById('goop_count_div');
         div.appendChild(element);
         let br = document.createElement("br");
         div.appendChild(br);
@@ -215,74 +160,34 @@ class Player {
         console.log('Skipping \'total\' key');
       } else {
         console.log(`Updating element <${element_id}> with key, value: <${key}>, <${value}>`);
-        //let element_id = String(`player_inventory_${key}_goop_count`);
-        //console.log(`Using element_id: <${element_id}>`);
-        //document.getElementById(`player_inventory_${key}_goop_count`).innerHTML = value;
         document.getElementById(element_id).innerHTML = value;
-        //document.getElementById(element_id).innerHTML = value;
-        //document.getElementById('test').innerHTML = value;
       }
-    }
-
-    //document.getElementById('player_inventory_gray_goop_count').innerHTML = count['gray'];
-    //document.getElementById('player_inventory_white_goop_count').innerHTML = count['white'];
-    //document.getElementById('player_inventory_blue_goop_count').innerHTML = count['blue'];
-    //document.getElementById('player_inventory_red_goop_count').innerHTML = count['red'];
-    //document.getElementById('player_inventory_green_goop_count').innerHTML = count['green'];
-    //document.getElementById('player_inventory_mana_goop_count').innerHTML = count['mana'];
-    //document.getElementById('player_inventory_hydrogen_goop_count').innerHTML = count['hydrogen']; 
-    //document.getElementById('player_inventory_oxygen_goop_count').innerHTML = count['oxygen'];  
+    }  
 
   }
 
-  get goop_count() {
-    //var colors = [ 'blue', 'red', 'green' ];
-    var count = {
-      'blue': 0,
-      'red': 0,
-      'green': 0,
-      'mana': 0,
-      'gray': 0
-    };
-    //for (var i = 0; i < Object.keys(count).length; i++) {}
-    //for (var i = 0; i < colors.length; i++) {
-    //  counts.push({
-    //    key: colors[i],
-    //    value: this.inventory['goops'].filter(function(goop) { return goop.color == colors[i]}).length
-    //  })
-    for (var i = 0; i < this.inventory['goops'].length; i++) {
-      count[this.inventory['goops'][i].color] += 1;
-      console.log(`Goop composition mana count: <${this.inventory['goops'][i].composition['mana']}>`)
-      if (this.inventory['goops'][i].composition['mana'] >= 1) {
-        console.log('Goop with mana in composition was found.')
-        count['mana'] += 1;
-      }
-    }
-    return count
-  }
+  //get goop_count() {
+  //  var count = {
+  //    'blue': 0,
+  //    'red': 0,
+  //    'green': 0,
+  //    'mana': 0,
+  //    'gray': 0
+  //  };
+  //  for (var i = 0; i < this.inventory['goops'].length; i++) {
+  //    count[this.inventory['goops'][i].color] += 1;
+  //    console.log(`Goop composition mana count: <${this.inventory['goops'][i].composition['mana']}>`)
+  //    if (this.inventory['goops'][i].composition['mana'] >= 1) {
+  //      console.log('Goop with mana in composition was found.')
+  //      count['mana'] += 1;
+  //    }
+  //  }
+  //  return count
+  //}
 
 }
 
-class Mana {
-  static name = 'mana';
-  static color = 'white';
-}
 
-class Hydrogen {
-  static name = 'hydrogen';
-  static color = 'blue';
-}
-
-class Oxygen {
-  static name = 'oxygen';
-  static color = 'green';
-}
-
-const MINO_CLASS_TABLE = {
-  'mana'  : Mana,
-  'hydrogen'  : Hydrogen,
-  'oxygen'    : Oxygen
-}
 
 
 // Define a class to represent any goops, which are friendly objects owned by
@@ -295,106 +200,131 @@ class Goop {
 
     let random_makeup = Goop.randomize_makeup();
 
-    //this.color = Goop.randomize_color();
-    //this.color = 'green';
-    //var composition = {};
-    //for (var i = 0; i < MINOS.length; i++) {
-      //composition.Add({
-      //  key: MINOS[i],
-      //  value: 0
-      //});
-    //  composition[MINOS[i]] = 0;
-    //}
-    //this.mass = random_makup['mass'];
     this.composition = random_makeup['composition'];
-    //this.composition = Goop.randomize_composition();
-    //this.composition = {
-    //  'mana'  : 0
-    //};
+
     console.log(`Goop composition: <${this.composition}>`)
     console.log(`Goop composition mana count: <${this.composition['mana']}>`)
 
-    // Pure mana slimes appear blue
-    //if (this.composition['mana'] > 0 && Object.values(this.composition).reduce((a, b) => a + b) == this.composition['mana']) {
-    //  this.color = 'white';
-    //} else {
-      // Any other slimes look gray
-    //  this.color = 'gray';
-    //}
   }
 
   get color() {
-    //if (this.chemical_type == 'mana') {
-    //  return 'white';
-    //} else if (this.chemical_type == 'hydrogen') {
-    //  return 'blue';
-    //} else if (this.chemical_type == 'oxygen') {
-    //  return 'green';
-    //} else {
-    //  return 'gray';
-    //}
+
     try {
-      var color = MINO_CLASS_TABLE[this.chemical_type].color;
+      //var color = MINO_CLASS_TABLE[this.chemical_type].color;
+      var color = LOOKUPS['minos'][this.chemical_type].color;
     } catch (error) {
-      var color = 'gray';
+      var color = Mino.color;
     }
-    //return MINO_CLASS_TABLE[this.chemical_type].color;
     return color;
-    //return 'gray';
-    //return Hydrogen.color;
   }
 
   static randomize_makeup() {
     var mass = 5;
     var composition = Goop.randomize_composition(mass);
     return {
-      //'mass'        : mass,
       'composition' : composition
     };
   }
 
   get chemical_type() {
     var highest_value = 0;
-    var highest_minos = [];
-    //for (var i = 0; i < Object.keys(this.composition).length; i++) {
+    var highest_mino;
     for (const [index, [key, value]] of Object.entries(Object.entries(this.composition))) {
       console.log(`Iterating chemical type. Index, key, value: <${index}>, <${key}>, <${value}>`);
-      if (value > highest_value) {
-        console.log(`<${key}> value of <${value}> detected as higher than <${highest_value}>`);
-        highest_minos = [key]
+      // No need to worry about 0 values
+      if (value <= 0) {
+        continue;
+      }
+      // If it's the first non-zero value, it wins
+      else if (highest_mino === null) {
+        console.log(`<${key}> wins as it is the first/only mino.`);
+        highest_mino = key;
         highest_value = value;
-      } else if (value == highest_value) {
+      }
+      // If it's value is higher than the previous highest value, it wins
+      else if (value > highest_value) {
+        console.log(`<${key}> value of <${value}> detected as higher than <${highest_value}>`);
+        highest_mino = key;
+        highest_value = value;
+      } 
+      // If the values are equal, most important thing is that it returns the
+      // same answer every time.
+      else if (value == highest_value) {
         console.log(`<${key}> value of <${value}> detected as equal to <${highest_value}>`);
-        highest_minos.push(key)
+        //highest_minos.push(key)
+        if (LOOKUPS['minos'][key].dominance > LOOKUPS['minos'][highest_mino].dominance) {
+          console.log(`<${key}> is stronger than <${highest_value}> in goop and overpowers it.`);
+          highest_mino = key;
+        }
+        // On the off-chance dominance values are the same, just go
+        // by commonality for now.
+        else if (LOOKUPS['minos'][key].dominance == LOOKUPS['minos'][highest_mino].dominance) {
+          console.log('dominance collision encountered');
+          if (LOOKUPS['minos'][key].commonality > LOOKUPS['minos'][highest_mino].commonality) {
+            console.log(`<${key}> beat <${highest_mino}> based on commonality.`);
+            highest_mino = key;
+          } 
+          else {
+            console.log(`<${highest_mino}> beat <${key}> based on commonality.`);
+          }
+        }
       }
     }
-    if (highest_minos.length > 1) {
-      console.log(`Highest minos: <${highest_minos}>`);
-      return 'hybrid';
-    } else {
-      let highest_mino = highest_minos[0];
-      console.log(`Highest mino: <${highest_mino}>`);
-    //var highest_mino = highest_minos[Math.floor(Math.random() * highest_minos.length)];
-      return highest_mino;
-    }
+    //if (highest_minos.length > 1) {
+    //  console.log(`Highest minos: <${highest_minos}>`);
+    //  return 'hybrid';
+    //} else {
+    //  let highest_mino = highest_minos[0];
+    console.log(`Highest mino: <${highest_mino}>`);
+    return highest_mino;
+    //}
   }
 
   static randomize_composition(mass=1) {
     console.log('Generating random composition')
 
-    var mino, composition = {
-      'mana'      : 0,
-      'hydrogen'  : 0,
-      'oxygen'    : 0
-    };
+    //var mino, composition = {
+    //  'mana'      : 0,
+    //  'hydrogen'  : 0,
+    //  'oxygen'    : 0
+    //};
+    var composition = {};
+    var probability = {};
+    //for (var i=0; i < Object.keys(LOOKUPS['minos']).length; i++) {
+    //  composition[Object.keys(LOOKUPS['minos'])[i]] = 0;
+    //  console.log(`test test mino: <${Object.keys(LOOKUPS['minos'])[i]}>.`);
+    //  console.log(`test test name: <${Object.keys(LOOKUPS['minos'])[i].name}>.`);
+    //  console.log(`test test commonality: <${Object.keys(LOOKUPS['minos'])[i].commonality}>.`);
+    //  probability[Object.keys(LOOKUPS['minos'])[i]] = Object.keys(LOOKUPS['minos'])[i].commonality;
+    for (const [index, [key, value]] of Object.entries(Object.entries(LOOKUPS['minos']))) {
+      composition[key] = 0;
+      console.log(`test test mino: <${LOOKUPS['minos'][key]}>.`);
+      console.log(`test test name: <${LOOKUPS['minos'][key].name}>.`);
+      console.log(`test test commonality: <${LOOKUPS['minos'][key].commonality}>.`);
+      probability[key] = LOOKUPS['minos'][key].commonality;
+    }
+    console.log('Pre-generation composition:');
+    for (const [index, [key, value]] of Object.entries(Object.entries(composition))) {
+      console.log(`<${key}>: <${value}>`);
+    }
+    console.log('Pre-generation probability:');
+    for (const [index, [key, value]] of Object.entries(Object.entries(probability))) {
+      console.log(`<${key}>: <${value}>`);
+    }
+    console.log(`test oxygen commonality: <${LOOKUPS['minos']['oxygen'].commonality}>.`);
+    
 
     for (var i=0; i < mass; i++) {
+      console.log(`Randomizing mass: <${i}>`);
 
-      var mino = weighted_choice({
-        'mana'      : 0.1,
-        'hydrogen'  : 2.0,
-        'oxygen'    : 1.0
-      })
+      //var mino = weighted_choice({
+      //  'mana'      : 0.1,
+      //  'hydrogen'  : 2.0,
+      //  'oxygen'    : 1.0
+      //})
+      var mino = weighted_choice(probability);
+      
+        
 
       console.log(`Composition random mino: <${mino}>`)
       composition[mino] += 1;
@@ -402,11 +332,9 @@ class Goop {
     }
   
     console.log('Logging final composition:   =====   =====');
-    //for (var i=0; i < Object.keys(composition).length; i++) {
       for (const [index, [key, value]] of Object.entries(Object.entries(composition))) {
       console.log(`<${key}>: <${value}>`);
     }
-    //console.log(`Final composcd ition: <${composition}>`)
     return composition;
   }
 
@@ -417,7 +345,6 @@ class Goop {
       'green'
     ]
     return valid_colors[Math.floor(Math.random() * valid_colors.length)];
-    //return 'blue';
   }
 }
 
@@ -449,10 +376,3 @@ function largest_integer_from_array(input_array) {
 
 // GAME LOGIC
 var player = new Player();
-//$(document).ready(function() {
-//  console.log('TEST TEST TEST');
-  //$('.goopology_understanding_tier_0').show();
-  //$('.goopology_understanding_tier_1').hide();
-//  player.check_skills();
-//});
-//$('.goopology_understanding_tier_1').hide();
