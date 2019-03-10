@@ -1,3 +1,9 @@
+*{font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;}
+
+body {
+    background-image: url('artflow_201903100020.png');
+}
+
 #goopology_understanding_tier_1_stats_div {
     display: none;
 }

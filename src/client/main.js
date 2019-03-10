@@ -263,6 +263,27 @@ class Player {
 
 }
 
+class Mana {
+  static name = 'mana';
+  static color = 'white';
+}
+
+class Hydrogen {
+  static name = 'hydrogen';
+  static color = 'blue';
+}
+
+class Oxygen {
+  static name = 'oxygen';
+  static color = 'green';
+}
+
+const MINO_CLASS_TABLE = {
+  'mana'  : Mana,
+  'hydrogen'  : Hydrogen,
+  'oxygen'    : Oxygen
+}
+
 
 // Define a class to represent any goops, which are friendly objects owned by
 // the player.
@@ -303,15 +324,24 @@ class Goop {
   }
 
   get color() {
-    if (this.chemical_type == 'mana') {
-      return 'white';
-    } else if (this.chemical_type == 'hydrogen') {
-      return 'blue';
-    } else if (this.chemical_type == 'oxygen') {
-      return 'green';
-    } else {
-      return 'gray';
+    //if (this.chemical_type == 'mana') {
+    //  return 'white';
+    //} else if (this.chemical_type == 'hydrogen') {
+    //  return 'blue';
+    //} else if (this.chemical_type == 'oxygen') {
+    //  return 'green';
+    //} else {
+    //  return 'gray';
+    //}
+    try {
+      var color = MINO_CLASS_TABLE[this.chemical_type].color;
+    } catch (error) {
+      var color = 'gray';
     }
+    //return MINO_CLASS_TABLE[this.chemical_type].color;
+    return color;
+    //return 'gray';
+    //return Hydrogen.color;
   }
 
   static randomize_makeup() {
