@@ -2,18 +2,28 @@
 <html>
 
   <head>
-    <script src='jquery-1.12.2.js'></script>
+    <!--<script src='jquery-1.12.2.js'></script>-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link rel='stylesheet' type='text/css' href='interface.css'/>
     <script type='text/javascript' src='main.js'></script>
   </head>
 
   <body>
     <h1>Li'l Goops!</h1>
-    <p>You have <span id='player_inventory_goop_count'></span> goops!</p>
+    <p>You have <span id='player_inventory_goop_count'></span> goops</p>
+    <p class='goopology_understanding_tier_0'>You have <span id='player_inventory_gray_goop_count'></span> gray goops</p>
+    <p class='goopology_understanding_tier_0'>You have <span id='player_inventory_white_goop_count'></span> white goops</p>
+    <p class='goopology_understanding_tier_0'>You have <span id='player_inventory_blue_goop_count'></span> blue goops</p>
+    <p class='goopology_understanding_tier_0'>You have <span id='player_inventory_red_goop_count'></span> red goops</p>
+    <p class='goopology_understanding_tier_0'>You have <span id='player_inventory_green_goop_count'></span> green goops</p>
+    <p class='goopology_understanding_tier_1'>You have <span id='player_inventory_mana_goop_count'></span> mana goops</p>
+    <p class='goopology_understanding_tier_1'>You have <span id='player_inventory_hydrogen_goop_count'></span> hydrogen goops</p>
+    <p class='goopology_understanding_tier_1'>You have <span id='player_inventory_oxygen_goop_count'></span> oxygen goops</p>
     <br />
     <br />
     <br />
     <button onclick='player.pray_for_goops()'>Pray for goops!</button>
+    <button onclick="player.research('goopology')">Research goops</button>
   </body>
   
 </html>
