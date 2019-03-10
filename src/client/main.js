@@ -25,12 +25,80 @@ class Player {
 
   check_skills() {
     // If goopology is above 0, switch visible goop info tiers
+    //var tier0_elements = document.getElementsByClassName('goopology_understanding_tier_0');
+    //var tier1_elements = document.getElementsByClassName('goopology_understanding_tier_1');
+
+    //for (var i=0; i < tier0_elements.length; i++) {
+    //  if (player.skills['goopology'] <= 0) {
+    //    //tier0_elements[i].setAttribute('display', 'block');
+    //    document.getElementById(tier0_elements[i]).style.display = 'block';
+    //  } else {
+    //    //tier0_elements[i].setAttribute('display', 'none');
+    //    document.getElementById(tier0_elements[i]).style.display = 'none';
+    //  }
+    //}
+
+    //for (var i=0; i < tier1_elements.length; i++) {
+    //  if (player.skills['goopology'] >= 1) {
+    //    //tier1_elements[i].setAttribute('display', 'block');
+    //    document.getElementById(tier1_elements[i]).style.display = 'block';
+    //  } else {
+    //    //tier1_elements[i].setAttribute('display', 'none');
+    //    document.getElementById(tier1_elements[i]).style.display = 'none';
+    //  }
+    //}
+
+
+    //for (var i=0; i < document.getElementsByClassName('goopology_understanding_tier_0').length; i++) {
+    //  if (player.skills['goopology'] <= 0) {
+    //    document.getElementsByClassName('goopology_understanding_tier_0')[i].setAttribute('display', 'block');
+    //    //document.getElementsByClassName('goopology_understanding_tier_1')[i].setAttribute('display', 'none');
+    //  }
+    //  if (player.skills['goopology'] >= 1) {
+    //    document.getElementsByClassName('goopology_understanding_tier_0')[i].setAttribute('display', 'none');
+    //    //document.getElementsByClassName('goopology_understanding_tier_1')[i].setAttribute('display', 'block');
+    //  }
+    //}
+
+    //for (var i=0; i < document.getElementsByClassName('goopology_understanding_tier_1').length; i++) {
+    //  if (player.skills['goopology'] <= 0) {
+    //    //document.getElementsByClassName('goopology_understanding_tier_0')[i].setAttribute('display', 'block');
+    //    document.getElementsByClassName('goopology_understanding_tier_1')[i].setAttribute('display', 'none');
+    //  }
+    //  if (player.skills['goopology'] >= 1) {
+    //    //document.getElementsByClassName('goopology_understanding_tier_0')[i].setAttribute('display', 'none');
+    //    document.getElementsByClassName('goopology_understanding_tier_1')[i].setAttribute('display', 'block');
+    //  }
+    //}
+
+
+      //$('.goopology_understanding_tier_0').show();
+      //$('.goopology_understanding_tier_0').toggle(true);
+      
+      //$('.goopology_understanding_tier_1').hide();
+      //$('.goopology_understanding_tier_1').toggle(false);
+      //document.getElementsByClassName('goopology_understanding_tier_1').setAttribute('display', 'none');
+    //} else if (player.skills['goopology'] >= 1) {
+      //$('.goopology_understanding_tier_0').hide();
+      //$('.goopology_understanding_tier_1').show();
+      //$('.goopology_understanding_tier_0').toggle(false);
+      //$('.goopology_understanding_tier_1').toggle(true);
+      //document.getElementsByClassName('goopology_understanding_tier_0').setAttribute('display', 'none');
+      //document.getElementsByClassName('goopology_understanding_tier_1').setAttribute('display', 'block');
+    //}
+
     if (player.skills['goopology'] <= 0) {
-      $('.goopology_understanding_tier_0').show();
-      $('.goopology_understanding_tier_1').hide();
+      //$('.goopology_understanding_tier_0').toggle(true);
+      //$('.goopology_understanding_tier_1').toggle(false);
+      $('#goopology_understanding_tier_0_stats_div').toggle(true);
+      $('#goopology_understanding_tier_1_stats_div').toggle(false);
+      //$('.goopology_understanding_tier_0').show();
+      //$('.goopology_understanding_tier_0').hide();
     } else if (player.skills['goopology'] >= 1) {
-      $('.goopology_understanding_tier_0').hide();
-      $('.goopology_understanding_tier_1').show();
+      $('#goopology_understanding_tier_0_stats_div').toggle(false);
+      $('#goopology_understanding_tier_1_stats_div').toggle(true);
+      //$('.goopology_understanding_tier_0').hide();
+      //$('.goopology_understanding_tier_0').show();
     }
   }
 
@@ -49,13 +117,14 @@ class Player {
 
   update_goop_counts() {
     var count = {
-      'total' : this.inventory['goops'].length,
+      //'total' : this.inventory['goops'].length,
       'white' : 0,
       'blue'  : 0,
       'red'   : 0,
       'green' : 0,
-      'mana'  : 0,
-      'gray'  : 0,
+      'hybrid'    : 0,
+      'mana'      : 0,
+      'gray'      : 0,
       'hydrogen'  : 0,
       'oxygen'    : 0
     };
@@ -81,20 +150,89 @@ class Player {
 
       count[goop.chemical_type] += 1;
 
+
+
       //}
       //} else {
       //  console.log(`ERROR: Goop with non-1 mana count found! Count: <${goop.composition['mana']}`);
       //}
 
     }
-    document.getElementById('player_inventory_gray_goop_count').innerHTML = count['gray'];
-    document.getElementById('player_inventory_white_goop_count').innerHTML = count['white'];
-    document.getElementById('player_inventory_blue_goop_count').innerHTML = count['blue'];
-    document.getElementById('player_inventory_red_goop_count').innerHTML = count['red'];
-    document.getElementById('player_inventory_green_goop_count').innerHTML = count['green'];
-    document.getElementById('player_inventory_mana_goop_count').innerHTML = count['mana'];
-    document.getElementById('player_inventory_hydrogen_goop_count').innerHTML = count['hydrogen']; 
-    document.getElementById('player_inventory_oxygen_goop_count').innerHTML = count['oxygen'];  
+
+    
+
+    for (const [index, [key, value]] of Object.entries(Object.entries(count))) {
+      console.log(`Got <${key}>:<${value}> when populating document.`);
+
+      // Create matching document elements if they don't exist
+      //if ($('#unique-selector').length === 0) {
+      var element_id = String(`player_inventory_${key}_goop_count`);
+      if ($(`#${element_id}`).length === 0) {
+
+        
+        console.log(`Creating element: <${element_id}>`)
+        let element = document.createElement(element_id);
+        //var para = document.createElement('p');
+        //var text_node = document.createTextNode(`You have <span id='player_inventory_${key}_goop_count'></span> ${key} goops`);
+        //document.getElementById(element_id).innerHTML = `You have <span id='player_inventory_${key}_goop_count'></span> ${key} goops`;
+        element.innerHTML = `You have <span id='player_inventory_${key}_goop_count'></span> ${key} goops`;
+        //document.getElementById(element_id).setAttribute('class', 'goopology_understanding_tier_0');
+        element.setAttribute('id', `player_inventory_${key}_goop_count_p`);
+        //element.setAttribute('display', 'block');
+
+        let colors = [
+          'white',
+          'blue',
+          'red',
+          'green',
+          'gray'
+        ];
+        let chemical_types = [
+          'hybrid',
+          'mana',        
+          'hydrogen',
+          'oxygen'
+        ];
+        if (colors.includes(key)) {
+          element.setAttribute('class', 'goopology_understanding_tier_0');
+          var div = document.getElementById('goopology_understanding_tier_0_stats_div');
+        }
+        if (chemical_types.includes(key)) {
+          element.setAttribute('class', 'goopology_understanding_tier_1');
+          var div = document.getElementById('goopology_understanding_tier_1_stats_div');
+        } else {
+          var div = document.getElementById('goopology_understanding_tier_0_stats_div');
+        }
+
+        //let div = document.getElementById('goop_count_div');
+        div.appendChild(element);
+        let br = document.createElement("br");
+        div.appendChild(br);
+
+      }
+
+      if (key == 'total') {
+        console.log('Skipping \'total\' key');
+      } else {
+        console.log(`Updating element <${element_id}> with key, value: <${key}>, <${value}>`);
+        //let element_id = String(`player_inventory_${key}_goop_count`);
+        //console.log(`Using element_id: <${element_id}>`);
+        //document.getElementById(`player_inventory_${key}_goop_count`).innerHTML = value;
+        document.getElementById(element_id).innerHTML = value;
+        //document.getElementById(element_id).innerHTML = value;
+        //document.getElementById('test').innerHTML = value;
+      }
+    }
+
+    //document.getElementById('player_inventory_gray_goop_count').innerHTML = count['gray'];
+    //document.getElementById('player_inventory_white_goop_count').innerHTML = count['white'];
+    //document.getElementById('player_inventory_blue_goop_count').innerHTML = count['blue'];
+    //document.getElementById('player_inventory_red_goop_count').innerHTML = count['red'];
+    //document.getElementById('player_inventory_green_goop_count').innerHTML = count['green'];
+    //document.getElementById('player_inventory_mana_goop_count').innerHTML = count['mana'];
+    //document.getElementById('player_inventory_hydrogen_goop_count').innerHTML = count['hydrogen']; 
+    //document.getElementById('player_inventory_oxygen_goop_count').innerHTML = count['oxygen'];  
+
   }
 
   get goop_count() {
@@ -156,16 +294,28 @@ class Goop {
     console.log(`Goop composition mana count: <${this.composition['mana']}>`)
 
     // Pure mana slimes appear blue
-    if (this.composition['mana'] > 0 && Object.values(this.composition).reduce((a, b) => a + b) == this.composition['mana']) {
-      this.color = 'white';
-    } else {
+    //if (this.composition['mana'] > 0 && Object.values(this.composition).reduce((a, b) => a + b) == this.composition['mana']) {
+    //  this.color = 'white';
+    //} else {
       // Any other slimes look gray
-      this.color = 'gray';
+    //  this.color = 'gray';
+    //}
+  }
+
+  get color() {
+    if (this.chemical_type == 'mana') {
+      return 'white';
+    } else if (this.chemical_type == 'hydrogen') {
+      return 'blue';
+    } else if (this.chemical_type == 'oxygen') {
+      return 'green';
+    } else {
+      return 'gray';
     }
   }
 
   static randomize_makeup() {
-    var mass = 1;
+    var mass = 5;
     var composition = Goop.randomize_composition(mass);
     return {
       //'mass'        : mass,
@@ -188,12 +338,15 @@ class Goop {
         highest_minos.push(key)
       }
     }
-    //if (highest_minos.length > 1) {  
-    //}
-    console.log(`Highest minos: <${highest_minos}>`);
-    console.log(`Highest mino: <${highest_mino}>`);
-    var highest_mino = highest_minos[Math.floor(Math.random() * highest_minos.length)];
-    return highest_mino
+    if (highest_minos.length > 1) {
+      console.log(`Highest minos: <${highest_minos}>`);
+      return 'hybrid';
+    } else {
+      let highest_mino = highest_minos[0];
+      console.log(`Highest mino: <${highest_mino}>`);
+    //var highest_mino = highest_minos[Math.floor(Math.random() * highest_minos.length)];
+      return highest_mino;
+    }
   }
 
   static randomize_composition(mass=1) {
@@ -208,8 +361,8 @@ class Goop {
     for (var i=0; i < mass; i++) {
 
       var mino = weighted_choice({
-        'mana'      : 1.0,
-        'hydrogen'  : 1.0,
+        'mana'      : 0.1,
+        'hydrogen'  : 2.0,
         'oxygen'    : 1.0
       })
 
@@ -223,7 +376,7 @@ class Goop {
       for (const [index, [key, value]] of Object.entries(Object.entries(composition))) {
       console.log(`<${key}>: <${value}>`);
     }
-    //console.log(`Final composition: <${composition}>`)
+    //console.log(`Final composcd ition: <${composition}>`)
     return composition;
   }
 
