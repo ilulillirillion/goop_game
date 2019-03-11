@@ -36,8 +36,12 @@ class ReactionHandler {
 class Element {
   static name = 'element';
   static color = 'gray';
+  static symbol = '?';
   static commonality = 1;
   static dominance = 1;
+  static protons = 1;
+  static electrons = 1;
+  static atomic_weight = 1;
   //static get reactivity() {
   //  return {
   //    'mana'      : 1,
@@ -45,6 +49,11 @@ class Element {
   //    'oxygen'    : 1
   //  }
   //}
+
+  static get neutrons() {
+    //return Math.floor(this.atomic_weight - this.protons)
+    return Math.round(this.atomic_weight - this.protons)
+  }
 }
 
 /**
@@ -66,9 +75,27 @@ class Mana extends Mino {
 
 class Hydrogen extends Element {
   static name = 'hydrogen';
+  static symbol = 'H';
   static color = 'blue';
   static commonality = 2;
   static dominance = 2;
+  static protons = 1;
+  static electrons = 1;
+  static atomic_weight = 1.007;
+  
+  // DEMO: because hydrogen has higher potential energy outside of a covalent bond, make it tend towards covalent bond
+  static potential_energy = 2;
+}
+
+class Oxygen extends Element {
+  static name = 'oxygen';
+  static symbol = 'O';
+  static color = 'green';
+  static commonality = 2;
+  static dominance = 1;
+  static electrons = 8;
+  static protons = 8;
+  static atomic_weight = 15.999;
   //static get reactivity() {
   //  let table = {
   //    'hydrogen'    : 1,
@@ -79,19 +106,10 @@ class Hydrogen extends Element {
   //}
 }
 
-class Oxygen extends Element {
-  static name = 'oxygen';
-  static color = 'green';
-  static commonality = 2;
-  static dominance = 1;
-  //static get reactivity() {
-  //  let table = {
-  //    'hydrogen'    : 1,
-  //    'oxygen'      : 1
-  //  };
-  //  let completed_table = Object.assign({}, LOOKUPS['templates']['reactivity_table'], table);
-  //  return completed_table;
-  //}
+class Compound {
+  constructor(composition) {
+    this.composition = composition;
+  }
 }
 
 // Don't know of a way to gather all class definitions other than to use a 
@@ -227,9 +245,12 @@ class Player {
   //}
 
   pray_for_goops() {
+    console.log('Player is praying for a goop.')
     // Player has a 50% chance to receive a generic goop.
     if (random_chance(0.5)) {
+      console.log('Player praying for goop successful.')
       let goop = new Goop();
+      console.log(goop);
       console.log(`TEST reactivity: <${goop.reactivity}>.`);
       this.receive_goop(goop);
     }
@@ -648,8 +669,8 @@ class Goop {
       var element = weighted_choice(probability);
       
         
-
       console.log(`Composition random element: <${element}>`)
+      console.log(LOOKUPS['elements'][element]);
       composition[element] += 1;
 
     }
@@ -700,6 +721,28 @@ function largest_integer_from_array(input_array) {
 function generate_uuid() {
   var uuid = Math.random().toString(36).substring(2) + (new Date()).getTime().toString(36);
   return uuid;
+}
+
+function random_choice_from_array(arr){
+  let min = 0;
+  let max = (arr.length - 1);
+  //let max = arr.length;
+  var random_index = Math.round(Math.random() * (max - min)) + min;
+  console.log(`Calculated random index <${random_index}> using min, max: <${min}>, <${max}>`);
+  random_select = arr[random_index];
+  console.log(`Randomly selected <${random_select}> from array using random index <${random_index}>`);
+  //return arr[random_index];
+  return random_select;
+
+}
+
+function test_random_element() {
+
+  element = random_choice_from_array(Object.keys(LOOKUPS['elements']));
+  console.log(`Got random element <${element}>`);
+  console.log(LOOKUPS['elements'][element]);
+  console.log(`Neutron count: <${LOOKUPS['elements'][element].neutrons}>`);
+  
 }
 
 // GAME LOGIC
