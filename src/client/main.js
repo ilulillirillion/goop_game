@@ -4,42 +4,122 @@
 //  'oxygen'
 //]
 
-class Mino {
-  static name = 'mino';
+
+/*
+class ReactionHandler {
+  static reactions = [
+    {
+      'name'        : 'oxygen-and-hydrogen',
+      'reactants'   : [
+        {
+          'compound'      : 'oxygen',
+          'quantity'      : 1
+        },
+        {
+          'compound'      : 'hydrogen',
+          'quantity'      : 1
+        }
+      ],
+      'products'    : [
+        {
+          'compound'      : 'water',
+          'quantity'      : 1
+        }
+      ]
+
+      ]
+    }
+  ]
+}
+*/
+
+class Element {
+  static name = 'element';
   static color = 'gray';
   static commonality = 1;
   static dominance = 1;
+  //static get reactivity() {
+  //  return {
+  //    'mana'      : 1,
+  //    'hydrogen'  : 1,
+  //    'oxygen'    : 1
+  //  }
+  //}
 }
 
+/**
 class Mana extends Mino {
   static name = 'mana';
   static color = 'white';
-  static commonality = 1;
+  static commonality = 0;
   static dominance = 3;
+  //static get reactivity() {
+  //  let table = {
+  //    'hydrogen'    : 1,
+  //    'oxygen'      : 1
+  //  };
+  //  let completed_table = Object.assign({}, LOOKUPS['templates']['reactivity_table'], table);
+  //  return completed_table;
+  //}
 }
+ */
 
-class Hydrogen extends Mino {
+class Hydrogen extends Element {
   static name = 'hydrogen';
   static color = 'blue';
   static commonality = 2;
   static dominance = 2;
+  //static get reactivity() {
+  //  let table = {
+  //    'hydrogen'    : 1,
+  //    'oxygen'      : 1
+  //  };
+  //  let completed_table = Object.assign({}, LOOKUPS['templates']['reactivity_table'], table);
+  //  return completed_table;
+  //}
 }
 
-class Oxygen extends Mino {
+class Oxygen extends Element {
   static name = 'oxygen';
   static color = 'green';
-  static commonality = 3;
+  static commonality = 2;
   static dominance = 1;
+  //static get reactivity() {
+  //  let table = {
+  //    'hydrogen'    : 1,
+  //    'oxygen'      : 1
+  //  };
+  //  let completed_table = Object.assign({}, LOOKUPS['templates']['reactivity_table'], table);
+  //  return completed_table;
+  //}
 }
 
 // Don't know of a way to gather all class definitions other than to use a 
 // lookup table (other than to resort to eval)
 const LOOKUPS = {
-  'minos' : {
-    'mana'      : Mana,
+  'elements' : {
+    //'mana'      : Mana,
     'hydrogen'  : Hydrogen,
     'oxygen'    : Oxygen
-  }
+  },
+  'discovery_triggers' : [
+    'player_inventory_white_goop_count_p',
+    'player_inventory_blue_goop_count_p',
+    'player_inventory_red_goop_count_p',
+    'player_inventory_green_goop_count_p',
+    'player_inventory_gray_goop_count_p',
+    'player_inventory_hybrid_goop_count_p',
+    'player_inventory_mana_goop_count_p',
+    'player_inventory_hydrogen_goop_count_p',
+    'player_inventory_oxygen_goop_count_p'
+  ]
+  //'templates' : {
+  //  'reactivity_table'  : {
+  //    'mana'  : 1,
+  //    'hydrogen'  : 1,
+  //    'oxygen'    : 1
+  //  }
+  //}
 }
 
 //const MINO_CLASS_TABLE = {
@@ -90,7 +170,61 @@ class Player {
       $('#goopology_understanding_tier_0_stats_div').toggle(false);
       $('#goopology_understanding_tier_1_stats_div').toggle(true);
     }
+    //console.log('About to iterate undiscovered elements');
+    //$('.undiscovered').each(function () {
+    //  console.log(`Iterating undiscovered element <${this.id}>`);
+    //  for (var index in LOOKUPS['discovery_triggers']) {
+    //    let discovery_trigger = LOOKUPS['discovery_triggers'][index];
+    //    console.log(`Checking discovery trigger: <${discovery_trigger}>`);
+    //    if (this.id.includes(discovery_trigger)) {
+    //      console.log(`Discovering <${this.id}>!`);
+    //      document.getElementById(this.id).classList.remove('undiscovered');
+    //    }
+    //  }
+    //});
   }
+
+  //check_triggers() {
+  //  check_discovery_triggers()
+  //}
+
+  //check_discovery_triggers() {
+  //  for (var index in this.inventory['goops']) {
+  //    goop = this.inventory['goops'][index];
+  //    
+  //  }
+  //}
+
+      // If the id ends with a common suffix, try to recognize this and work with it
+      //if (this.id.endsWith('_p')) {
+      //  let stripped_id = this.id.substring(0, str.length - 2);
+      //  let possible_ids = [
+      //    this.id,
+      //    stripped_id,
+      //    this.id + '_span',
+      //    this.id + '_div'
+      //  ];      
+      //}
+      //else if (this.id.endsWith('_span')) {
+      //  let stripped_id = this.id.substring(0, str.length - 5);
+      //  let possible_ids = [
+      //    this.id,
+      //    stripped_id,
+      //    this.id + '_p',
+      //    this.id + '_div'
+      //  ];
+      //}
+      //else if (this.id.endsWith('_div')) {
+      //  let stripped_id = this.id.substring(0, str.length - 4);
+      //  let possible_ids = [
+      //    this.id,
+      //    stripped_id,
+      //    this.id + '_p',
+      //    this.id + '_span'
+      //  ];
+      //}
+    //});
+  //}
 
   pray_for_goops() {
     // Player has a 50% chance to receive a generic goop.
@@ -137,9 +271,16 @@ class Player {
 
     for (const [index, [key, value]] of Object.entries(Object.entries(count))) {
       console.log(`Got <${key}>:<${value}> when populating document.`);
+      //if (value > 0) {
+      //  discovery_flag = `discovered_${key}_goops`;
+      //  console.log(`Discovering flag: <${discovery_flag}>.`);
+      //  player.flags[discovery_flag] = true;
+      //}
       // Create matching document elements if they don't exist
       var element_id = String(`player_inventory_${key}_goop_count`);
-      if ($(`#${element_id}`).length === 0) { 
+      // If there are no elements matching the counter id and the value is above 0
+      if ($(`#${element_id}`).length === 0 && value > 0) {
+      //if ($(`#${element_id}`).length === 0 && value > 0) { 
         console.log(`Creating element: <${element_id}>`)
         let element = document.createElement(element_id);
         element.innerHTML = `You have <span id='player_inventory_${key}_goop_count'></span> ${key} goops`;
@@ -158,11 +299,11 @@ class Player {
           'oxygen'
         ];
         if (colors.includes(key)) {
-          element.setAttribute('class', 'goopology_understanding_tier_0');
+          element.setAttribute('class', 'goopology_understanding_tier_0 undiscovered');
           var div = document.getElementById('goopology_understanding_tier_0_stats_div');
         }
         if (chemical_types.includes(key)) {
-          element.setAttribute('class', 'goopology_understanding_tier_1');
+          element.setAttribute('class', 'goopology_understanding_tier_1 undiscovered');
           var div = document.getElementById('goopology_understanding_tier_1_stats_div');
         } else {
           var div = document.getElementById('goopology_understanding_tier_0_stats_div');
@@ -178,7 +319,11 @@ class Player {
         console.log('Skipping \'total\' key');
       } else {
         console.log(`Updating element <${element_id}> with key, value: <${key}>, <${value}>`);
-        document.getElementById(element_id).innerHTML = value;
+        // Use try here to avoid error updating 0 to non-discovered (created) elements
+        try {
+          document.getElementById(element_id).innerHTML = value;
+        } catch(error) {  
+        }
       }
     }  
 
@@ -212,7 +357,7 @@ class Player {
 // the player.
 class Goop {
 
-  static base_stability = 0.0001;
+  static base_stability = 1;
 
   constructor() {
     console.log('Instantiating new goop')
@@ -233,10 +378,10 @@ class Goop {
   tick() {
     console.log('doing goop tick');
     //console.log(this);
-    if (this.reactivity > this.stability) {
-      console.log('goop reacts and dissolves to its death!');
-      this.die();
-    }
+    //if (this.instability > this.stability) {
+    //  console.log('goop reacts and dissolves to its death!');
+    //  this.die();
+    //}
   }
 
   die() {
@@ -247,60 +392,77 @@ class Goop {
         player.inventory['goops'].splice(i, 1);
       }
     }
-    
-
   }
 
-  get reactivity() {
+  //check_for_reactions() {
+    //for (var mino in Object.keys(this.composition)) {
+    //  for (var other_mino in Object.keys(this.composition)) {
+    //    if (mino.reactants.includes(other_mino)) 
+    //  }
+    //}
+  //  for (var i in this.composition) {
+  //    let mino = this.composition[i];
+  //    for (var j in this.composition) {
+  //      let other_mino = this.composition[j];
+  //      if (LOOKUPS['minos'][mino].reactants.includes(other_mino)) {
+  //        mino.react(other_mino)
+  //      }
+  //    }
+  //  }
+  //f}
 
-    var total_mino_count = 0;
-    var mino_profiles = {};
-    console.log(`Starting reactivity calculation. Total mino count, mino_profiles: <${total_mino_count}>, <${mino_profiles}>.`);
+  //get instability() {
+  //
+  //  var total_mino_count = 0;
+  //  var mino_profiles = {};
+  //  console.log(`Starting reactivity calculation. Total mino count, mino_profiles: <${total_mino_count}>, <${mino_profiles}>.`);
+  //
+  //  for (var mino in this.composition) {
+  //    let count = this.composition[mino];
+  //    console.log(`Adding <${mino}> count of <${count}> to count total of <${total_mino_count}>`);
+  //    total_mino_count += count;
+  //  }
+  //
+  //  for (var mino in this.composition) {
+  //    let count = this.composition[mino];
+  //    let makeup_ratio = count / total_mino_count;
+  //    console.log(`Calculated makeup_ratio of <${makeup_ratio}> using <${count}>/<${total_mino_count}>.`);
+  //    mino_profiles[mino] = makeup_ratio;
+  //  }
 
-    for (var mino in this.composition) {
-      let count = this.composition[mino];
-      console.log(`Adding <${mino}> count of <${count}> to count total of <${total_mino_count}>`);
-      total_mino_count += count;
-    }
-
-    for (var mino in this.composition) {
-      let count = this.composition[mino];
-      let makeup_ratio = count / total_mino_count;
-      console.log(`Calculated makeup_ratio of <${makeup_ratio}> using <${count}>/<${total_mino_count}>.`);
-      mino_profiles[mino] = makeup_ratio;
-    }
-
-    // For each mino ratio pair, iterate through the other pairs, checking reactivity
-    let component_reactivity_averages = [];
-    for (var component in mino_profiles) {
-      let ratio = mino_profiles[component];
-      //let component_reactivity_total = 0;
-      let component_reactivity_scores = [];
-      for (mino in mino_profiles) {
-        let ratio = mino_profiles[mino];
-        if (mino == component) {
-          continue;
-        }
-        else {
-          let reactivity_rating = 1;
-          let reactivity_score = reactivity_rating * ratio;
-          console.log(`Calculated reactivity strengh <${reactivity_score}> from <${reactivity_rating}> * <${ratio}>.`);
-          component_reactivity_scores.push(reactivity_score);
-          console.log(`Added reactivity score of <${reactivity_score}> to component reactivity score for running total.`);
-        }
-      }
-      // Get overall component reactivity average by summing and dividing
-      let component_reactivity_average = component_reactivity_scores.reduce((a, b) => a + b, 0) / component_reactivity_scores.length;
-      console.log(`Calculated component average reactivity: <${component_reactivity_average}>`);
-      component_reactivity_averages.push(component_reactivity_average);
-    }
-
-    // Finally, calculate overall reactivity by summing and dividing averages
-    let overall_reactivity_rating = component_reactivity_averages.reduce((a, b) => a + b, 0) / component_reactivity_averages.length;
-    console.log(`Calculated overall reactivity rating: <${overall_reactivity_rating}>.`);
-    return overall_reactivity_rating;
-
-  }
+  //  // For each mino ratio pair, iterate through the other pairs, checking reactivity
+  //  let component_reactivity_averages = [];
+  //  for (var component in mino_profiles) {
+  //    let ratio = mino_profiles[component];
+  //    //let component_reactivity_total = 0;
+  //    let component_reactivity_scores = [];
+  //    for (mino in mino_profiles) {
+  //      let ratio = mino_profiles[mino];
+  //      if (mino == component) {
+  //        continue;
+  //      }
+  //      else {
+  //        //let reactivity_rating = 1;
+  //        let reactivity_rating = LOOKUPS['minos'][component].reactivity[mino];
+  //        let reactivity_score = reactivity_rating * ratio;
+  //        console.log(`Calculated reactivity strengh <${reactivity_score}> from <${reactivity_rating}> * <${ratio}>.`);
+  //        component_reactivity_scores.push(reactivity_score);
+  //        console.log(`Added reactivity score of <${reactivity_score}> to component reactivity score for running total.`);
+  //      }
+  //    }
+  //    // Get overall component reactivity average by summing and dividing
+  //    let component_reactivity_average = component_reactivity_scores.reduce((a, b) => a + b, 0) / component_reactivity_scores.length;
+  //    console.log(`Calculated component average reactivity: <${component_reactivity_average}>`);
+  //    component_reactivity_averages.push(component_reactivity_average);
+  //  }
+  //
+  //  // Finally, calculate overall reactivity by summing and dividing averages
+  //  console.log(component_reactivity_averages);
+  //  let overall_reactivity_rating = component_reactivity_averages.reduce((a, b) => a + b, 0) / component_reactivity_averages.length;
+  //  console.log(`Calculated overall reactivity rating: <${overall_reactivity_rating}>.`);
+  //  return overall_reactivity_rating;
+  //
+  //}
 
     //var composition_info = {
     //  'total_mino_count'  : 0,
@@ -364,17 +526,17 @@ class Goop {
 
   //}
 
-  get stability() {
-    return Goop.base_stability;
-  }
+  //get stability() {
+  //  return Goop.base_stability;
+  //}
 
   get color() {
 
     try {
       //var color = MINO_CLASS_TABLE[this.chemical_type].color;
-      var color = LOOKUPS['minos'][this.chemical_type].color;
+      var color = LOOKUPS['elements'][this.chemical_type].color;
     } catch (error) {
-      var color = Mino.color;
+      var color = Element.color;
     }
     return color;
   }
@@ -389,7 +551,7 @@ class Goop {
 
   get chemical_type() {
     var highest_value = 0;
-    var highest_mino;
+    var highest_element;
     for (const [index, [key, value]] of Object.entries(Object.entries(this.composition))) {
       console.log(`Iterating chemical type. Index, key, value: <${index}>, <${key}>, <${value}>`);
       // No need to worry about 0 values
@@ -397,15 +559,15 @@ class Goop {
         continue;
       }
       // If it's the first non-zero value, it wins
-      else if (highest_mino === null) {
-        console.log(`<${key}> wins as it is the first/only mino.`);
-        highest_mino = key;
+      else if (highest_element === null) {
+        console.log(`<${key}> wins as it is the first/only element.`);
+        highest_element = key;
         highest_value = value;
       }
       // If it's value is higher than the previous highest value, it wins
       else if (value > highest_value) {
         console.log(`<${key}> value of <${value}> detected as higher than <${highest_value}>`);
-        highest_mino = key;
+        highest_element = key;
         highest_value = value;
       } 
       // If the values are equal, most important thing is that it returns the
@@ -413,20 +575,20 @@ class Goop {
       else if (value == highest_value) {
         console.log(`<${key}> value of <${value}> detected as equal to <${highest_value}>`);
         //highest_minos.push(key)
-        if (LOOKUPS['minos'][key].dominance > LOOKUPS['minos'][highest_mino].dominance) {
+        if (LOOKUPS['elements'][key].dominance > LOOKUPS['elements'][highest_element].dominance) {
           console.log(`<${key}> is stronger than <${highest_value}> in goop and overpowers it.`);
-          highest_mino = key;
+          highest_element = key;
         }
         // On the off-chance dominance values are the same, just go
         // by commonality for now.
-        else if (LOOKUPS['minos'][key].dominance == LOOKUPS['minos'][highest_mino].dominance) {
+        else if (LOOKUPS['elements'][key].dominance == LOOKUPS['elements'][highest_element].dominance) {
           console.log('dominance collision encountered');
-          if (LOOKUPS['minos'][key].commonality > LOOKUPS['minos'][highest_mino].commonality) {
-            console.log(`<${key}> beat <${highest_mino}> based on commonality.`);
-            highest_mino = key;
+          if (LOOKUPS['elements'][key].commonality > LOOKUPS['elements'][highest_element].commonality) {
+            console.log(`<${key}> beat <${highest_element}> based on commonality.`);
+            highest_element = key;
           } 
           else {
-            console.log(`<${highest_mino}> beat <${key}> based on commonality.`);
+            console.log(`<${highest_element}> beat <${key}> based on commonality.`);
           }
         }
       }
@@ -436,8 +598,8 @@ class Goop {
     //  return 'hybrid';
     //} else {
     //  let highest_mino = highest_minos[0];
-    console.log(`Highest mino: <${highest_mino}>`);
-    return highest_mino;
+    console.log(`Highest element: <${highest_element}>`);
+    return highest_element;
     //}
   }
 
@@ -457,12 +619,12 @@ class Goop {
     //  console.log(`test test name: <${Object.keys(LOOKUPS['minos'])[i].name}>.`);
     //  console.log(`test test commonality: <${Object.keys(LOOKUPS['minos'])[i].commonality}>.`);
     //  probability[Object.keys(LOOKUPS['minos'])[i]] = Object.keys(LOOKUPS['minos'])[i].commonality;
-    for (const [index, [key, value]] of Object.entries(Object.entries(LOOKUPS['minos']))) {
+    for (const [index, [key, value]] of Object.entries(Object.entries(LOOKUPS['elements']))) {
       composition[key] = 0;
-      console.log(`test test mino: <${LOOKUPS['minos'][key]}>.`);
-      console.log(`test test name: <${LOOKUPS['minos'][key].name}>.`);
-      console.log(`test test commonality: <${LOOKUPS['minos'][key].commonality}>.`);
-      probability[key] = LOOKUPS['minos'][key].commonality;
+      console.log(`test test element: <${LOOKUPS['elements'][key]}>.`);
+      console.log(`test test name: <${LOOKUPS['elements'][key].name}>.`);
+      console.log(`test test commonality: <${LOOKUPS['elements'][key].commonality}>.`);
+      probability[key] = LOOKUPS['elements'][key].commonality;
     }
     console.log('Pre-generation composition:');
     for (const [index, [key, value]] of Object.entries(Object.entries(composition))) {
@@ -472,7 +634,7 @@ class Goop {
     for (const [index, [key, value]] of Object.entries(Object.entries(probability))) {
       console.log(`<${key}>: <${value}>`);
     }
-    console.log(`test oxygen commonality: <${LOOKUPS['minos']['oxygen'].commonality}>.`);
+    console.log(`test oxygen commonality: <${LOOKUPS['elements']['oxygen'].commonality}>.`);
     
 
     for (var i=0; i < mass; i++) {
@@ -483,12 +645,12 @@ class Goop {
       //  'hydrogen'  : 2.0,
       //  'oxygen'    : 1.0
       //})
-      var mino = weighted_choice(probability);
+      var element = weighted_choice(probability);
       
         
 
-      console.log(`Composition random mino: <${mino}>`)
-      composition[mino] += 1;
+      console.log(`Composition random element: <${element}>`)
+      composition[element] += 1;
 
     }
   
