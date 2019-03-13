@@ -8,14 +8,6 @@ class Atom {
     console.log(this);
     console.log(`Created atom element: <${this.element}>`);
   }
-  //reacts_with(other_atom) {
-  //  if (this.element.reacts_with(other_atom.element)) {
-  //    return true;
-  //  }
-  //  else {
-  //    return false;
-  //  }
-  //}
 };
 
 class Molecule {
@@ -30,7 +22,6 @@ class Molecule {
   get symbol() {
     console.log('Trying to get symbols');
     let characters = '';
-    //let unhandled_atoms = this.atoms.splice(0);
     let unhandled_symbols = [];
     console.log(unhandled_symbols);
     for (var i in this.atoms) {
@@ -103,49 +94,6 @@ class Molecule {
       return false;
     }
   }
-
-    /*
-    for (var i in unhandled_elements) {
-      let iterations_complete = false;
-      let this_element = unhandled_elements[i];
-      let other_elements = unhandled_elements.splice(i);
-      let found_earlier_element = false;  
-      while (!found_earlier_element) {
-        for (var j in other_elements) {
-           let other_element = other_elements[j];
-           if (this_element.symbol == other_element.symbol) {
-             continue;
-           }
-           else {
-             if (other_element.symbol < this_element.symbol) {
-               found_earlier_element = true;
-               
-             }
-           }
-        }
-      }
-      */
-
-      //if (other_elements.every()
-
-      //for (var j in unhandled_elements) {
-      //  let that_element = unhandled_elements[j];
-      //}
-
-      /*
-      if (symbol.length <= 0) {
-        //add_to_molecular_symbol(symbol, element);
-        symbol += element.symbol;
-      }
-      // Otherwise, look at the existing symbols, and figure out where this one goes
-      else {
-        for (var j in symbol) {
-          let existing_character = symbol[j];
-                    
-      }
-      */
-      
-    //}
 }
 
 class Element {
@@ -166,26 +114,8 @@ class Element {
   static hill_sort_priority = 3;
 
   static get neutrons() {
-    //return Math.floor(this.atomic_weight - this.protons)
     return Math.round(this.atomic_weight - this.protons)
-
   }
-
-  
-
-  
-
-
-  
-  //constructor() {
-    //this.name = name;
-    //this.color = Element.color;
-    //this.symbol = Element.symbol;
-    //this.dominance = Element.dominance;
-    //this.protons = protons;
-    //this.electron = electrons;
-    //this.atomic_weight = atomic_weight;
-  //}
 }
 
 class Hydrogen extends Element {
@@ -284,7 +214,6 @@ class Player {
       console.log('Player praying for goop successful.')
       let goop = new Goop();
       console.log(goop);
-      //console.log(`TEST reactivity: <${goop.reactivity}>.`);
       this.receive_goop(goop);
     }
     this.tick();
@@ -407,19 +336,13 @@ class Goop {
     // Randomize composition using a single element
     let element = random_choice_from_array(Object.keys(LOOKUPS['elements']));
     console.log(element);
-    //this.composition = [ new Atom(element) ];
-    //this.composition = [ new Atom('hydrogen'), new Atom('hydrogen') ];
-    //this.composition = [ new Atom('hydrogen'), new Atom('oxygen') ];
-    // Try hydrogen again
     this.composition = [ 
       new Molecule( [ new Atom('hydrogen')  ] ), 
       new Molecule( [ new Atom('oxygen')   ] )
       //new Molecule( [ new Atom('hydrogen')  ] )
     ];
-    //this.composition = random_makeup['composition'];
 
     console.log(`Goop composition: <${this.composition}>`)
-    //console.log(`Goop composition mana count: <${this.composition['mana']}>`)
 
     this.id = generate_uuid();
 
@@ -446,7 +369,6 @@ class Goop {
   get color() {
 
     try {
-      //var color = MINO_CLASS_TABLE[this.chemical_type].color;
       var color = LOOKUPS['elements'][this.chemical_type].color;
     } catch (error) {
       var color = Element.color;
@@ -473,20 +395,7 @@ class Goop {
     }
   }
 
-  /*
-  static randomize_makeup() {
-    var mass = 5;
-    var composition = Goop.randomize_composition(mass);
-    return {
-      'composition' : composition
-    };
-  }
-  */
-
   get chemical_type() {
-    //var highest_value = 0;
-    //var highest_element;
-    //for (const [index, [key, value]] of Object.entries(Object.entries(this.composition))) {
     console.log('Getting chemical type...');
     var count = {};
     console.log(count);
@@ -527,126 +436,16 @@ class Goop {
       // same answer every time.
       else if (value == highest_value) {
         console.log(`<${key}> value of <${value}> detected as equal to <${highest_value}>`);
-        //highest_minos.push(key)
-        /*
-        if (LOOKUPS['molecules'][key].dominance > LOOKUPS['molecules'][highest_molecule].dominance) {
-          console.log(`<${key}> is stronger than <${highest_value}> in goop and overpowers it.`);
-          highest_molecules = key;
+        if (String(key) < String(highest_molecule)) {
+          highest_molecule = key;
         }
-        // On the off-chance dominance values are the same, just go
-        // by commonality for now.
-        else if (LOOKUPS['molecules'][key].dominance == LOOKUPS['molecules'][highest_molecule].dominance) {
-          console.log('dominance collision encountered');
-          if (LOOKUPS['molecules'][key].commonality > LOOKUPS['molecules'][highest_molecule].commonality) {
-            console.log(`<${key}> beat <${highest_molecule}> based on commonality.`);
-            highest_molecule = key;
-          } 
-          else {
-            console.log(`<${highest_molecule}> beat <${key}> based on commonality.`);
-          }
-        }
-        */
-       // Just go alphabetically
-       if (String(key) < String(highest_molecule)) {
-         highest_molecule = key;
-       }
       }
     }
-    //if (highest_minos.length > 1) {
-    //  console.log(`Highest minos: <${highest_minos}>`);
-    //  return 'hybrid';
-    //} else {
-    //  let highest_mino = highest_minos[0];
     console.log(`Highest molecule: <${highest_molecule}>`);
     return highest_molecule;
-    //}
   }
 
 }
-
-  /*
-  static randomize_composition(mass=1) {
-    console.log('Generating random composition')
-
-    //var mino, composition = {
-    //  'mana'      : 0,
-    //  'hydrogen'  : 0,
-    //  'oxygen'    : 0
-    //};
-    var composition = {};
-    var probability = {};
-    //for (var i=0; i < Object.keys(LOOKUPS['minos']).length; i++) {
-    //  composition[Object.keys(LOOKUPS['minos'])[i]] = 0;
-    //  console.log(`test test mino: <${Object.keys(LOOKUPS['minos'])[i]}>.`);
-    //  console.log(`test test name: <${Object.keys(LOOKUPS['minos'])[i].name}>.`);
-    //  console.log(`test test commonality: <${Object.keys(LOOKUPS['minos'])[i].commonality}>.`);
-    //  probability[Object.keys(LOOKUPS['minos'])[i]] = Object.keys(LOOKUPS['minos'])[i].commonality;
-    for (const [index, [key, value]] of Object.entries(Object.entries(LOOKUPS['elements']))) {
-      composition[key] = 0;
-      console.log(`test test element: <${LOOKUPS['elements'][key]}>.`);
-      console.log(`test test name: <${LOOKUPS['elements'][key].name}>.`);
-      console.log(`test test commonality: <${LOOKUPS['elements'][key].commonality}>.`);
-      probability[key] = LOOKUPS['elements'][key].commonality;
-    }
-    console.log('Pre-generation composition:');
-    for (const [index, [key, value]] of Object.entries(Object.entries(composition))) {
-      console.log(`<${key}>: <${value}>`);
-    }
-    console.log('Pre-generation probability:');
-    for (const [index, [key, value]] of Object.entries(Object.entries(probability))) {
-      console.log(`<${key}>: <${value}>`);
-    }
-    console.log(`test oxygen commonality: <${LOOKUPS['elements']['oxygen'].commonality}>.`);
-    
-
-    for (var i=0; i < mass; i++) {
-      console.log(`Randomizing mass: <${i}>`);
-
-      //var mino = weighted_choice({
-      //  'mana'      : 0.1,
-      //  'hydrogen'  : 2.0,
-      //  'oxygen'    : 1.0
-      //})
-      var element = weighted_choice(probability);
-      
-        
-      console.log(`Composition random element: <${element}>`)
-      console.log(LOOKUPS['elements'][element]);
-      composition[element] += 1;
-
-    }
-  
-    console.log('Logging final composition:   =====   =====');
-      for (const [index, [key, value]] of Object.entries(Object.entries(composition))) {
-      console.log(`<${key}>: <${value}>`);
-    }
-    return composition;
-  }
-  */
-
-  /*
-  static randomize_color() {
-    var valid_colors = [
-      'red',
-      'blue',
-      'green'
-    ]
-    return valid_colors[Math.floor(Math.random() * valid_colors.length)];
-  }
-  */
-
-/*
-function hill_sort(symbols) {
-  let sorted_symbols = [];
-  for (var i in symbols) {
-    let symbol = symbols[i];
-    if (symbol != 'C' && symbol != 'H') {
-      sorted_symbols.push(symbol);
-
-    }
-  }
-}
-*/
 
 function random_chance(probability) {
   if (probability > Math.random()) {
@@ -682,12 +481,10 @@ function generate_uuid() {
 function random_choice_from_array(arr){
   let min = 0;
   let max = (arr.length - 1);
-  //let max = arr.length;
   var random_index = Math.round(Math.random() * (max - min)) + min;
   console.log(`Calculated random index <${random_index}> using min, max: <${min}>, <${max}>`);
   random_select = arr[random_index];
   console.log(`Randomly selected <${random_select}> from array using random index <${random_index}>`);
-  //return arr[random_index];
   return random_select;
 
 }
@@ -696,11 +493,6 @@ function append_to_molecular_symbol(symbol, character) {
   console.log(`Appending <${character}> to molecular symbol <${symbol}>...`);
   return symbol + character;
 }
-
-//function find_first_alphabetically() {
-//}
-
-//function comes_alphabetically_after() {}
 
 function test_random_element() {
 
