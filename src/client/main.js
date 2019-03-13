@@ -1,8 +1,152 @@
 class Atom {
   constructor(element) {
+    console.log('About to create atom...');
+    console.log(element);
     this.element = LOOKUPS.elements[element];
+    this.id = generate_uuid();
+    console.log('Logging created atom...');
+    console.log(this);
+    console.log(`Created atom element: <${this.element}>`);
   }
+  //reacts_with(other_atom) {
+  //  if (this.element.reacts_with(other_atom.element)) {
+  //    return true;
+  //  }
+  //  else {
+  //    return false;
+  //  }
+  //}
 };
+
+class Molecule {
+  constructor(atoms) {
+    console.log('About to create molecule...');
+    console.log(atoms);
+    this.atoms = atoms;
+    console.log('logging created molecule...');
+    console.log(this);
+  }
+
+  get symbol() {
+    console.log('Trying to get symbols');
+    let characters = '';
+    //let unhandled_atoms = this.atoms.splice(0);
+    let unhandled_symbols = [];
+    console.log(unhandled_symbols);
+    for (var i in this.atoms) {
+      let atom = this.atoms[i];
+      unhandled_symbols.push(atom.element.symbol);
+    }
+    console.log(unhandled_symbols);
+    console.log(this);
+    console.log(characters);
+    console.log(unhandled_symbols);
+    for (var i in unhandled_symbols) {
+      let symbol = unhandled_symbols[i];
+      if (symbol == 'C') {
+        console.log('Prioritizing carbon while creating symbol');
+        console.log(characters);
+        console.log(symbol);
+        characters = append_to_molecular_symbol(characters, symbol);
+        unhandled_symbols.splice(i);
+      }
+    }
+    for (var i in unhandled_symbols) {
+      let symbol = unhandled_symbols[i];
+      if (symbol == 'H') {
+        console.log('Prioritizing hydrogen while creating symbol');
+        console.log(unhandled_symbols);
+        console.log(characters);
+        console.log(symbol);
+        characters = append_to_molecular_symbol(characters, symbol);
+        unhandled_symbols.splice(i);
+        console.log('Appended to characters and removed from unhandled symbols');
+        console.log(characters);
+        console.log(unhandled_symbols);
+      }
+    }
+    console.log(unhandled_symbols);
+    for (var i in unhandled_symbols.sort()) { 
+      let symbol = unhandled_symbols[i];
+      console.log('Handling regular element while creating symbol');
+      console.log(characters);
+      console.log(symbol);
+      characters = append_to_molecular_symbol(characters, symbol);
+    }
+
+  console.log('About to return symbol...');
+  console.log(characters);
+  return characters;
+  }
+
+  static reacts_with(other_molecule) {
+    console.log('Checking if a reaction will occur between two molecules');
+    console.log(this);
+    console.log(other_molecule);
+    if (this.makes_covalent_bond_with(other_molecule)) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  static makes_covalent_bond_with(element) {
+    console.log('Checking if a covalent bond can be made between two elements');
+    console.log(this);
+    console.log(element);
+    if (this.electrons == element.electrons) {
+      console.log(`<${this.name}> forming covalent bond with <${element.name}> due to electron equivalency (used <${this.electrons}> == <${element.electrons}>)`);
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+    /*
+    for (var i in unhandled_elements) {
+      let iterations_complete = false;
+      let this_element = unhandled_elements[i];
+      let other_elements = unhandled_elements.splice(i);
+      let found_earlier_element = false;  
+      while (!found_earlier_element) {
+        for (var j in other_elements) {
+           let other_element = other_elements[j];
+           if (this_element.symbol == other_element.symbol) {
+             continue;
+           }
+           else {
+             if (other_element.symbol < this_element.symbol) {
+               found_earlier_element = true;
+               
+             }
+           }
+        }
+      }
+      */
+
+      //if (other_elements.every()
+
+      //for (var j in unhandled_elements) {
+      //  let that_element = unhandled_elements[j];
+      //}
+
+      /*
+      if (symbol.length <= 0) {
+        //add_to_molecular_symbol(symbol, element);
+        symbol += element.symbol;
+      }
+      // Otherwise, look at the existing symbols, and figure out where this one goes
+      else {
+        for (var j in symbol) {
+          let existing_character = symbol[j];
+                    
+      }
+      */
+      
+    //}
+}
 
 class Element {
   static name = 'element';
@@ -14,11 +158,25 @@ class Element {
   static electrons = 1;
   static atomic_weight = 1;
 
+  // What priority elements go into when being hill sorted
+  // 0 = special/meta
+  // 1 = carbon (first)
+  // 2 = hydrogen
+  // 3 = anything else
+  static hill_sort_priority = 3;
+
   static get neutrons() {
     //return Math.floor(this.atomic_weight - this.protons)
     return Math.round(this.atomic_weight - this.protons)
+
   }
 
+  
+
+  
+
+
+  
   //constructor() {
     //this.name = name;
     //this.color = Element.color;
@@ -39,7 +197,8 @@ class Hydrogen extends Element {
   static protons = 1;
   static electrons = 1;
   static atomic_weight = 1.007;
-  
+  static hill_sort_priority = 2;
+
   // DEMO: because hydrogen has higher potential energy outside of a covalent bond, make it tend towards covalent bond
   static potential_energy = 2;
 }
@@ -53,6 +212,7 @@ class Oxygen extends Element {
   static electrons = 8;
   static protons = 8;
   static atomic_weight = 15.999;
+  static hill_sort_priority = 3;
 }
 
 class Compound {
@@ -67,7 +227,9 @@ const LOOKUPS = {
   'elements' : {
     //'mana'      : Mana,
     'hydrogen'  : Hydrogen,
-    'oxygen'    : Oxygen
+    'H'         : Hydrogen,
+    'oxygen'    : Oxygen,
+    'O'         : Oxygen
   }
 }
 
@@ -155,10 +317,19 @@ class Player {
     };
     for (var i = 0; i < this.inventory['goops'].length; i++) {
       var goop = this.inventory['goops'][i]
+      if (goop.chemical_type == 'H') {
+        var chemical_type = 'hydrogen';
+      }
+      else if (goop.chemical_type == 'O') {
+        var chemical_type = 'oxygen';
+      }
+      else {
+        var chemical_type = goop.chemical_type;
+      }
       // Tally each different color goop
       count[goop.color] += 1;
       // Tally each goop by chemical type
-      count[goop.chemical_type] += 1;
+      count[chemical_type] += 1;
     }
 
     for (const [index, [key, value]] of Object.entries(Object.entries(count))) {
@@ -236,7 +407,15 @@ class Goop {
     // Randomize composition using a single element
     let element = random_choice_from_array(Object.keys(LOOKUPS['elements']));
     console.log(element);
-    this.composition = [ new Atom(element) ];
+    //this.composition = [ new Atom(element) ];
+    //this.composition = [ new Atom('hydrogen'), new Atom('hydrogen') ];
+    //this.composition = [ new Atom('hydrogen'), new Atom('oxygen') ];
+    // Try hydrogen again
+    this.composition = [ 
+      new Molecule( [ new Atom('hydrogen')  ] ), 
+      new Molecule( [ new Atom('oxygen')   ] )
+      //new Molecule( [ new Atom('hydrogen')  ] )
+    ];
     //this.composition = random_makeup['composition'];
 
     console.log(`Goop composition: <${this.composition}>`)
@@ -251,6 +430,7 @@ class Goop {
   // Do this every so often
   tick() {
     console.log('doing goop tick');
+    this.check_for_reactions();
   }
 
   die() {
@@ -274,6 +454,25 @@ class Goop {
     return color;
   }
 
+  check_for_reactions() {
+    // Iterate through each molecule in composition
+    for (var i in this.composition) {
+      let molecule = this.composition[i];
+      for (var j in this.composition) {
+        let other_molecule = this.composition[j];
+        // Don't try to react molecules with themselves
+        if (molecule.id == other_molecule.id) {
+          continue
+        }
+        if (molecule.reacts_with(other_molecule)) {
+          console.log('Two molecules are reacting');
+          console.log(molecule);
+          console.log(other_molecule);
+        }
+      }
+    }
+  }
+
   /*
   static randomize_makeup() {
     var mass = 5;
@@ -294,15 +493,16 @@ class Goop {
     console.log(this.composition);
     for (var i in this.composition) {
 
-      let current_atom = this.composition[i];
-      console.log(current_atom);
-      console.log(`Test: Atom element name: <${current_atom.element.name}>`);
-      count[current_atom.element.name] = (count[current_atom.element.name] || 0) + 1;
+      let current_molecule = this.composition[i];
+      console.log(current_molecule);
+      console.log(`Test: Molecule name: <${current_molecule.symbol}>`);
+      count[current_molecule.symbol] = (count[current_molecule.symbol] || 0) + 1;
     }
+    console.log('About to log count');
     console.log(count);
 
     let highest_value = 0;
-    let highest_element;
+    let highest_molecule;
     for (const [index, [key, value]] of Object.entries(Object.entries(count))) {
       console.log(`Iterating chemical type. Index, key, value: <${index}>, <${key}>, <${value}>`);
 
@@ -312,15 +512,15 @@ class Goop {
       }
 
       // If it's the first non-zero value, it wins
-      else if (highest_element === null) {
-        console.log(`<${key}> wins as it is the first/only element.`);
-        highest_element = key;
+      else if (highest_molecule === null) {
+        console.log(`<${key}> wins as it is the first/only molecule.`);
+        highest_molecule = key;
         highest_value = value;
       }
       // If it's value is higher than the previous highest value, it wins
       else if (value > highest_value) {
         console.log(`<${key}> value of <${value}> detected as higher than <${highest_value}>`);
-        highest_element = key;
+        highest_molecule = key;
         highest_value = value;
       } 
       // If the values are equal, most important thing is that it returns the
@@ -328,22 +528,28 @@ class Goop {
       else if (value == highest_value) {
         console.log(`<${key}> value of <${value}> detected as equal to <${highest_value}>`);
         //highest_minos.push(key)
-        if (LOOKUPS['elements'][key].dominance > LOOKUPS['elements'][highest_element].dominance) {
+        /*
+        if (LOOKUPS['molecules'][key].dominance > LOOKUPS['molecules'][highest_molecule].dominance) {
           console.log(`<${key}> is stronger than <${highest_value}> in goop and overpowers it.`);
-          highest_element = key;
+          highest_molecules = key;
         }
         // On the off-chance dominance values are the same, just go
         // by commonality for now.
-        else if (LOOKUPS['elements'][key].dominance == LOOKUPS['elements'][highest_element].dominance) {
+        else if (LOOKUPS['molecules'][key].dominance == LOOKUPS['molecules'][highest_molecule].dominance) {
           console.log('dominance collision encountered');
-          if (LOOKUPS['elements'][key].commonality > LOOKUPS['elements'][highest_element].commonality) {
-            console.log(`<${key}> beat <${highest_element}> based on commonality.`);
-            highest_element = key;
+          if (LOOKUPS['molecules'][key].commonality > LOOKUPS['molecules'][highest_molecule].commonality) {
+            console.log(`<${key}> beat <${highest_molecule}> based on commonality.`);
+            highest_molecule = key;
           } 
           else {
-            console.log(`<${highest_element}> beat <${key}> based on commonality.`);
+            console.log(`<${highest_molecule}> beat <${key}> based on commonality.`);
           }
         }
+        */
+       // Just go alphabetically
+       if (String(key) < String(highest_molecule)) {
+         highest_molecule = key;
+       }
       }
     }
     //if (highest_minos.length > 1) {
@@ -351,10 +557,12 @@ class Goop {
     //  return 'hybrid';
     //} else {
     //  let highest_mino = highest_minos[0];
-    console.log(`Highest element: <${highest_element}>`);
-    return highest_element;
+    console.log(`Highest molecule: <${highest_molecule}>`);
+    return highest_molecule;
     //}
   }
+
+}
 
   /*
   static randomize_composition(mass=1) {
@@ -426,7 +634,19 @@ class Goop {
     return valid_colors[Math.floor(Math.random() * valid_colors.length)];
   }
   */
+
+/*
+function hill_sort(symbols) {
+  let sorted_symbols = [];
+  for (var i in symbols) {
+    let symbol = symbols[i];
+    if (symbol != 'C' && symbol != 'H') {
+      sorted_symbols.push(symbol);
+
+    }
+  }
 }
+*/
 
 function random_chance(probability) {
   if (probability > Math.random()) {
@@ -471,6 +691,16 @@ function random_choice_from_array(arr){
   return random_select;
 
 }
+
+function append_to_molecular_symbol(symbol, character) {
+  console.log(`Appending <${character}> to molecular symbol <${symbol}>...`);
+  return symbol + character;
+}
+
+//function find_first_alphabetically() {
+//}
+
+//function comes_alphabetically_after() {}
 
 function test_random_element() {
 
