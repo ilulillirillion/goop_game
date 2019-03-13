@@ -19,6 +19,18 @@ class Molecule {
     console.log(this);
   }
 
+  get color() {
+    console.log('Trying to get molecule color');
+    pigments = {}
+    for (var i in this.atoms) {
+      let atom = this.atoms[i];
+      pigments.atom.color = pigments.atom.color || 0 + 1;
+    }
+    console.log('Logging pigments object');
+    console.log(pigments);
+    return pigment[0];
+  }
+
   get symbol() {
     console.log('Trying to get symbols');
     let characters = '';
@@ -96,6 +108,8 @@ class Molecule {
   }
 }
 
+
+
 class Element {
   static name = 'element';
   static color = 'gray';
@@ -145,10 +159,16 @@ class Oxygen extends Element {
   static hill_sort_priority = 3;
 }
 
+// TODO: remove this class
 class Compound {
   constructor(composition) {
     this.composition = composition;
   }
+}
+
+class PeriodicTable {
+  static hydrogen = Hydrogen;
+  static oxygen   = Oxygen;
 }
 
 // Don't know of a way to gather all class definitions other than to use a 
@@ -334,7 +354,8 @@ class Goop {
     //let random_makeup = Goop.randomize_makeup();
 
     // Randomize composition using a single element
-    let element = random_choice_from_array(Object.keys(LOOKUPS['elements']));
+    //let element = random_choice_from_array(Object.keys(LOOKUPS['elements']));
+    let element = random_choice_from_array(PeriodicTable);
     console.log(element);
     this.composition = [ 
       new Molecule( [ new Atom('hydrogen')  ] ), 
@@ -368,12 +389,18 @@ class Goop {
 
   get color() {
 
+    //console.log(`Getting goop color using chemical type: <${this.chemical_type}>`);
+    //var color = PeriodicTable[this.chemical_type].color;
+    /*
     try {
-      var color = LOOKUPS['elements'][this.chemical_type].color;
+      //var color = LOOKUPS['elements'][this.chemical_type].color;
+      var color = PeriodicTable[this.chemical_type].color;
     } catch (error) {
+      console.log('ENCOUNTERED ERROR GETTING COLOR!');
       var color = Element.color;
     }
-    return color;
+    */
+    return this.chemical_type.color;
   }
 
   check_for_reactions() {
@@ -496,10 +523,13 @@ function append_to_molecular_symbol(symbol, character) {
 
 function test_random_element() {
 
-  element = random_choice_from_array(Object.keys(LOOKUPS['elements']));
+  //element = random_choice_from_array(Object.keys(LOOKUPS['elements']));
+  element = random_choice_from_array(PeriodicTable);
   console.log(`Got random element <${element}>`);
-  console.log(LOOKUPS['elements'][element]);
-  console.log(`Neutron count: <${LOOKUPS['elements'][element].neutrons}>`);
+  //console.log(LOOKUPS['elements'][element]);
+  console.log(PeriodicTable[element])
+  //console.log(`Neutron count: <${LOOKUPS['elements'][element].neutrons}>`);
+  console.log(`Neutron count: <${PeriodicTable[element].neutrons}>`);
   
 }
 
