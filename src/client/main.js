@@ -1,15 +1,3 @@
-class Atom {
-  constructor(element) {
-    console.log('About to create atom...');
-    console.log(element);
-    this.element = LOOKUPS.elements[element];
-    this.id = generate_uuid();
-    console.log('Logging created atom...');
-    console.log(this);
-    console.log(`Created atom element: <${this.element}>`);
-  }
-};
-
 class Molecule {
   constructor(atoms) {
     console.log('About to create molecule...');
@@ -38,6 +26,7 @@ class Molecule {
     console.log(unhandled_symbols);
     for (var i in this.atoms) {
       let atom = this.atoms[i];
+      console.log(atom);
       unhandled_symbols.push(atom.element.symbol);
     }
     console.log(unhandled_symbols);
@@ -142,6 +131,7 @@ class Hydrogen extends Element {
   static electrons = 1;
   static atomic_weight = 1.007;
   static hill_sort_priority = 2;
+  static lookup_name = 'Hydrogen'
 
   // DEMO: because hydrogen has higher potential energy outside of a covalent bond, make it tend towards covalent bond
   static potential_energy = 2;
@@ -150,6 +140,7 @@ class Hydrogen extends Element {
 class Oxygen extends Element {
   static name = 'oxygen';
   static symbol = 'O';
+  static lookup_name = 'Oxygen';
   static color = 'green';
   static commonality = 2;
   static dominance = 1;
@@ -171,6 +162,28 @@ class PeriodicTable {
   static oxygen   = Oxygen;
 }
 
+//class ElementBuilder {
+//  static hydrogen = new Hydrogen();
+//  static oxygen = new Oxygen();
+//}
+
+class Atom {
+  constructor(element) {
+    console.log('About to create atom...');
+    console.log(element);
+    //this.element = LOOKUPS.elements[element];
+    //this.element = new PeriodicTable[element];
+    //this.element = ElementBuilder[element];
+    this.element = Hydrogen;
+    console.log('Logging element for newly created atom:');
+    console.log(this.element);
+    this.id = generate_uuid();
+    console.log('Logging created atom...');
+    console.log(this);
+    console.log(`Created atom element: <${this.element}>`);
+  }
+};
+
 // Don't know of a way to gather all class definitions other than to use a 
 // lookup table (other than to resort to eval)
 const LOOKUPS = {
@@ -187,12 +200,14 @@ const LOOKUPS = {
 class Player {
   constructor() {
     this.name = 'player';
-    this.inventory = {
-      'goops'     : [],
-      'mana'      : 0,
-      'hyrdogen'  : 0,
-      'oxygen'    : 0
-    };
+    //this.inventory = {
+    //  'goops'     : [],
+    //  'mana'      : 0,
+    //  'hyrdogen'  : 0,
+    //  'oxygen'    : 0
+    //};
+    this.inventory = [],
+    this.goops = [],
     this.skills = {
       'goopology' : 0
     }
@@ -200,8 +215,9 @@ class Player {
 
   tick() {
     console.log('doing tick');
-    for (var i in this.inventory['goops']) {
-      let goop = this.inventory['goops'][i];
+    this.update_inventory();
+    for (var i in this.goops) {
+      let goop = this.goops[i];
       console.log(goop);
       console.log(goop.name);
       goop.tick();
@@ -214,6 +230,13 @@ class Player {
     console.log(`Player <${subject}> skill: <${player.skills[subject]}>`);
     this.check_skills();
     this.tick();
+  }
+
+  wait_for_rain() {
+    this.tick();
+    console.log('It finally rains!');
+    player.inventory.push(convert_hill_notation_to_molecule('H2O'));
+    console.log(player);
   }
 
   check_skills() {
@@ -248,8 +271,29 @@ class Player {
   }
 
   receive_goop(goop) {
-    this.inventory['goops'].push(goop);
+    this.goops.push(goop);
     this.update_goop_counts();
+  }
+
+  update_inventory() {
+    console.log('Updating player inventory display');
+    for (var i in this.inventory) {
+      console.log(`Iterating player inventory(<${i}>).`);
+      var item = this.inventory[i];
+      console.log(item);
+      let element_id = String(`player_inventory_${item.symbol}_count_p`);
+      console.log(`Using element id <${element_id}> for updating inventory.`);
+      console.log(item);
+      console.log(element_id);
+      if ($(`#${element_id}`).length === 0) {
+        console.log(`Creating element: <${element_id}>`);
+        let element = document.createElement(element_id);
+        element.innerHTML = `You have <span id=player_inventory_${item.symbol}_count_span></span> ${item.symbol}s`;
+        document.body.append(element);
+        let br = document.createElement("br");
+        document.body.append(br);
+      }
+    }
   }
 
   update_goop_counts() {
@@ -264,8 +308,8 @@ class Player {
       'hydrogen'  : 0,
       'oxygen'    : 0
     };
-    for (var i = 0; i < this.inventory['goops'].length; i++) {
-      var goop = this.inventory['goops'][i]
+    for (var i = 0; i < this.goops.length; i++) {
+      var goop = this.goops[i]
       if (goop.chemical_type == 'H') {
         var chemical_type = 'hydrogen';
       }
@@ -339,11 +383,51 @@ class Player {
 }
 
 
+class Chemistry {
+  constructor() {}
+  get color() {
+    return 'blue';
+  }
+}
+
+
+class Thing {
+  constructor() {
+    console.log('instantiating a new thing');
+    this.id = generate_uuid();
+    this.name = 'thing';
+    console.log('logging newly created thing')
+    console.log(this);
+  }
+}
+
+
+class Goop extends Thing {
+  constructor() {
+    console.log('instantiating a new goop');
+
+    super();
+
+    this.name = 'goop';
+    this.chemistry = new Chemistry();
+
+    console.log(this);
+  }
+
+  get color() {
+    return this.chemistry.color;
+  }
+
+  tick() {
+    console.log('Goop is ticking. Logging goop object');
+    console.log(this);
+  }
+}
 
 
 // Define a class to represent any goops, which are friendly objects owned by
 // the player.
-class Goop {
+class OldGoop {
 
   static base_stability = 1;
 
@@ -379,10 +463,10 @@ class Goop {
 
   die() {
     console.log('goop dies!')
-    for (var i in player.inventory['goops']) {
-      let goop = player.inventory['goops'][i];
+    for (var i in player.goops) {
+      let goop = player.goops[i];
       if (goop.id == this.id) {
-        player.inventory['goops'].splice(i, 1);
+        player.goops.splice(i, 1);
       }
     }
   }
@@ -532,6 +616,125 @@ function test_random_element() {
   console.log(`Neutron count: <${PeriodicTable[element].neutrons}>`);
   
 }
+
+function convert_hill_notation_to_molecule(notation) {
+  console.log('Converting hill notation into molecule object...');
+  console.log(notation);
+
+  var ingredients = [];
+  console.log(ingredients);
+  console.log(`Notation length appears to be <${notation.length}>.`);
+
+  
+
+  for (var i=0; i < notation.length; i++) {
+    // Assume first character is not a number
+    // Assume first character is uppercase
+    var hill_symbol = notation[i];
+    console.log('Iterating on a character in hill notation');
+    console.log(hill_symbol);
+
+    //console.log(`Comparing <${i}> against notation length(<${notation.length}>).`);
+    //if (i > notation.length) {
+    //  console.log(`<${i}> has exceeded notation length`);
+    //  break
+    //}
+
+    //var quantity = 1;
+
+    console.log(`Checking <${i+1}> against notation length (<${notation.length}>).`);
+    if (i+1 < notation.length) {
+
+      // Check if the next character is a lowercase character
+      console.log(`Checking if <${notation}>[<${i+1}>] is a lowercase character...`);
+      if (notation[i+1] == notation[i+1].toLowerCase) {
+        console.log('The next character looks like a lowercase letter.');
+        // Add the lowercase letter to the element and tick iterator
+        hill_symbol += notation[i+1];
+        i += 1;
+      }
+      console.log(hill_symbol);
+
+    }
+
+    // Assume one atom will be created before checking
+    let quantity = 1;
+    console.log(`Checking <${i+1}> against notation length (<${notation.length}>).`);
+    if (i+1 < notation.length) {
+      
+      // Check if the next character is numeric
+      if (!isNaN(notation[i+1] * 1)) {
+        console.log('The next character looks like a number.');
+        quantity = Number(notation[i+1]);
+        i += 1;
+      }
+    }
+    console.log(quantity);
+
+    // Push the atom/s into the ingredients array
+    console.log(`About to iterate <${quantity}> times.`);
+    //for (var j in quantity) {
+    for (var j=0; j < quantity; j++) {
+      console.log('Pushing new atom into ingredients.');
+      //let atom = new Atom(convert_hill_notation_to_element(hill_symbol));
+      let atom = convert_hill_notation_to_element(hill_symbol);
+      console.log(atom);
+      ingredients.push(atom);
+      console.log(ingredients);
+    }
+  }
+
+  // Create a molecule using the finished ingredients
+  let molecule = new Molecule(ingredients);
+  console.log(molecule);
+  return molecule;
+}
+
+function convert_hill_notation_to_element(hill_notation) {
+  console.log('Attempting to convert hill notation to element');
+  console.log(hill_notation);
+
+  console.log('Creating element symbol lookup chart');
+  var conversion_chart = {};
+  for (var i in PeriodicTable) {
+    let element = PeriodicTable[i];
+    console.log(element);
+    console.log(element.lookup_name);
+    conversion_chart[element.symbol] = element.name;
+    console.log(conversion_chart);
+  }
+  console.log(conversion_chart);
+
+  console.log(`Looking up hill symbol <${hill_notation}>`);
+  let element = conversion_chart[hill_notation];
+  console.log(element);
+  //let element = new Atom(PeriodicTable[conversion_chart[hill_notation]]);
+  //let atom = new Atom(PeriodicTable[element]);
+  let atom = new Atom(element);
+  console.log(`Determined <${element}> matches <${hill_notation}>`);
+  return atom;
+
+}
+
+
+  /*
+  // As long as the next character isn't an uppercase letter
+  while !(isNaN(conversion_chart[i+1] * 1) && conversion_chart[i+1] == conversion_chart[i+1].toUpperCase()) {
+    let next_character = conversion_chart[i+1];
+  }
+
+    // Check if next character is an number
+    if (!isNaN(character * 1)){
+      alert('character is numeric');
+
+    
+
+  }
+
+
+}
+*/
+
 
 // GAME LOGIC
 var player = new Player();
