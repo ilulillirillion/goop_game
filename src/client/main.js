@@ -251,16 +251,102 @@ class Player {
     }
   }
 
+  /*
+  tick(ticks=1) {
+    console.log(`ticks: <${ticks}>`);
+    let that = this;
+    for (var i=0; i < ticks; i++) {
+
+      console.log('doing tick');
+      that.update_inventory();
+      for (var i in that.goops) {
+        let goop = that.goops[i];
+        console.log(goop);
+        console.log(goop.name);
+        goop.tick();
+
+      }
+
+      sleep(1000);
+
+    }
+  }
+  */
+
+ //<input type="button" id="aaa" value="button" />
+
+
   tick() {
     console.log('doing tick');
     this.update_inventory();
+    this.update_goop_counts();
     for (var i in this.goops) {
       let goop = this.goops[i];
       console.log(goop);
       console.log(goop.name);
       goop.tick();
+
     }
   }
+
+
+
+      /*
+      setTimeout(function() {
+        console.log('doing tick');
+        that.update_inventory();
+        for (var i in that.goops) {
+          let goop = that.goops[i];
+          console.log(goop);
+          console.log(goop.name);
+          goop.tick();
+        }
+      }, 1000)
+      */
+
+
+  update_buttons(inventory) {
+    for (const [item, quantity] of Object.entries(inventory)) {
+      if (quantity > 0) {
+        let button_id = String(`create_${item}_goop_button`);
+        let button_text = String(`Create Goop (${item})`);
+        if ($(`#${button_id}`).length === 0) {
+          let div = document.getElementById('dynamic_buttons_div');
+          let button = document.createElement('button');
+          button.setAttribute('id', button_id);
+          button.setAttribute('class', 'clickable');
+          button.innerHTML = button_text;
+          div.appendChild(button);
+          //document.getElementById(span_id).innerHTML = parseInt(1);
+          let br = document.createElement("br");
+          div.appendChild(br);
+
+          //let that = this;
+          /*
+          button.addEventListener ('click', function() {
+            //alert('goop created');
+            console.log(that);
+            that.create_goop();
+          });
+          */
+          button.addEventListener('click', function() {
+            //var elemSubmit = document.getElementById('mySubmit');
+            button.setAttribute('disabled', 'disabled');
+      
+            player.tick();
+      
+            // Removes disabling after 3 seconds
+            window.setTimeout(function() {
+              player.create_goop();
+              player.tick();
+              button.removeAttribute('disabled');
+            }, (10 * 1000));
+        },false);
+        }
+      }
+    }
+  }
+
 
   research(subject) {
     console.log(`Player researching <${subject}>`);
@@ -270,12 +356,29 @@ class Player {
     this.tick();
   }
 
+  create_goop() {
+    let goop = new Goop();
+    this.receive_goop(goop);
+  }
+
+
   wait_for_rain() {
+    //this.tick();
+    console.log('It finally rains!');
+    player.inventory.push(convert_hill_notation_to_molecule('H2O'));
+    console.log(player);
+    //setTimeout(this.get_rain, 5000);
+  }
+
+  /*
+  get_rain() {
+    console.log(this);
     this.tick();
     console.log('It finally rains!');
     player.inventory.push(convert_hill_notation_to_molecule('H2O'));
     console.log(player);
   }
+  */
 
   check_skills() {
 
@@ -310,7 +413,7 @@ class Player {
 
   receive_goop(goop) {
     this.goops.push(goop);
-    this.update_goop_counts();
+    //this.update_goop_counts();
   }
 
   update_inventory() {
@@ -351,6 +454,7 @@ class Player {
         document.getElementById(span_id).innerHTML = parseInt(quantity);
       }
     }
+    this.update_buttons(counts);
   }
 
 
@@ -847,6 +951,10 @@ function convert_hill_notation_to_molecule(notation) {
   return molecule;
 }
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 /*
 function convert_hill_notation_to_element(hill_notation) {
   console.log('Attempting to convert hill notation to element');
@@ -897,3 +1005,38 @@ function convert_hill_notation_to_element(hill_notation) {
 
 // GAME LOGIC
 var player = new Player();
+
+/*
+window.setInterval(function(){
+	
+	player.tick();
+	
+}, 1000);
+*/
+
+$( document ).ready(function() {
+  console.log( "ready!" );
+
+  var wait_for_rain_button = document.getElementById('wait_for_rain_button');
+  console.log(wait_for_rain_button);
+
+  wait_for_rain_button.addEventListener('click', function(event) {
+      //var elemSubmit = document.getElementById('mySubmit');
+      wait_for_rain_button.setAttribute('disabled', 'disabled');
+
+      player.tick();
+
+      // Removes disabling after 3 seconds
+      window.setTimeout(function() {
+
+          
+          player.wait_for_rain();
+          player.tick();
+          wait_for_rain_button.removeAttribute('disabled');
+          
+      //}, 3e3);
+      }, (3 * 1000));
+  },false);
+  
+});
+
