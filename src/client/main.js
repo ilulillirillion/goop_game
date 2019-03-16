@@ -33,17 +33,19 @@ class Molecule {
     console.log(this);
     console.log(characters);
     console.log(unhandled_symbols);
-    for (var i in unhandled_symbols) {
+    for (var i=unhandled_symbols.length; i >= 0; i--) {
+    //for (var i in unhandled_symbols) {
       let symbol = unhandled_symbols[i];
       if (symbol == 'C') {
         console.log('Prioritizing carbon while creating symbol');
         console.log(characters);
         console.log(symbol);
         characters = append_to_molecular_symbol(characters, symbol);
-        unhandled_symbols.splice(i);
+        unhandled_symbols.splice(i, 1);
       }
     }
-    for (var i in unhandled_symbols) {
+    for (var i=unhandled_symbols.length; i >= 0; i--) {
+    //for (var i in unhandled_symbols) {
       let symbol = unhandled_symbols[i];
       if (symbol == 'H') {
         console.log('Prioritizing hydrogen while creating symbol');
@@ -51,15 +53,36 @@ class Molecule {
         console.log(characters);
         console.log(symbol);
         characters = append_to_molecular_symbol(characters, symbol);
-        unhandled_symbols.splice(i);
+        console.log(`About to splice prioritized hydrogen atom from unhandled symbols (index: <${i}>)`);
+        console.log(unhandled_symbols);
+        unhandled_symbols.splice(i, 1);
+        console.log('Spliced prioritized hydrogen atom from unhandled symbols');
+        console.log(unhandled_symbols);
         console.log('Appended to characters and removed from unhandled symbols');
         console.log(characters);
         console.log(unhandled_symbols);
       }
     }
+    console.log('About to handle regular symbols');
     console.log(unhandled_symbols);
-    for (var i in unhandled_symbols.sort()) { 
-      let symbol = unhandled_symbols[i];
+    for (var i=unhandled_symbols.length - 1; i >= 0; i--) {
+    //for (var i )
+    //for (var i in unhandled_symbols.sort()) { 
+    //for (var i in unhandled_symbols) {
+      console.log('Logging unhandled symbols');
+      console.log(unhandled_symbols);
+      console.log(`Unhandled symbols length: <${unhandled_symbols.length}>`);
+      console.log('Sorting unhandled symbols');
+      let sorted_unhandled_symbols = unhandled_symbols.sort();
+      console.log(sorted_unhandled_symbols);
+      console.log('Reversing sorted unhandled symbols');
+      let reverse_sorted_unhandled_symbols = sorted_unhandled_symbols.reverse();
+      console.log(reverse_sorted_unhandled_symbols);
+      console.log(`Getting symbol from reverse sorted unhandled symbols (index: <${i}>)`);
+      let symbol = reverse_sorted_unhandled_symbols[i];
+      console.log(symbol);
+
+      //let symbol = unhandled_symbols.sort().reverse()[i];
       console.log('Handling regular element while creating symbol');
       console.log(characters);
       console.log(symbol);
@@ -119,6 +142,7 @@ class Element {
   static get neutrons() {
     return Math.round(this.atomic_weight - this.protons)
   }
+  
 }
 
 class Hydrogen extends Element {
@@ -159,7 +183,17 @@ class Compound {
 
 class PeriodicTable {
   static hydrogen = Hydrogen;
-  static oxygen   = Oxygen;
+  static H = Hydrogen;
+  static oxygen = Oxygen;
+  static O = Oxygen;
+
+  /*
+  static reference_element(element) {
+    let lookup_table = {
+      'hydrogen'  : Hydrogen;
+    }
+  }
+  */
 }
 
 //class ElementBuilder {
@@ -174,7 +208,11 @@ class Atom {
     //this.element = LOOKUPS.elements[element];
     //this.element = new PeriodicTable[element];
     //this.element = ElementBuilder[element];
-    this.element = Hydrogen;
+
+    //this.element = Hydrogen;
+    //this.element = new Element(element);
+    this.element = PeriodicTable[element];
+
     console.log('Logging element for newly created atom:');
     console.log(this.element);
     this.id = generate_uuid();
@@ -276,25 +314,126 @@ class Player {
   }
 
   update_inventory() {
+    console.log('Updatig player inventory display');
+    console.log(this);
+    var counts = {};
+    console.log(counts);
+    for (var i in this.inventory) {
+      console.log(`Iterating player inventory(<${i}>).`);
+      let item = this.inventory[i];
+      console.log(item);
+      console.log(`Updating item, count: <${item.symbol}>, <${counts[item.symbol]}>`);
+      counts[item.symbol] = (counts[item.symbol] || 0) + 1;
+      console.log(`Updated item, count: <${item.symbol}>, <${counts[item.symbol]}>`);
+      console.log(counts);
+    }
+    console.log('Logging final counts');
+    console.log(counts);
+    for (const [item, quantity] of Object.entries(counts)) {
+      let paragraph_id = String(`player_inventory_${item}_count_p`);
+      let span_id = String(`player_inventory_${item}_count_span`);
+      console.log(paragraph_id);
+      console.log('logging document element length:');
+      console.log($(`#${paragraph_id}`).length);
+      if ($(`#${paragraph_id}`).length === 0) {
+        let div = document.getElementById('player_inventory_div');
+        let paragraph = document.createElement(paragraph_id);
+        paragraph.setAttribute('id', paragraph_id);
+        paragraph.innerHTML = `You have <span id=${span_id}></span> ${item} molecules`;
+        div.appendChild(paragraph);
+        document.getElementById(span_id).innerHTML = parseInt(1);
+        let br = document.createElement("br");
+        div.appendChild(br);
+      }
+      else {
+        console.log('Attempting to update pre-existing inventory value');
+        console.log(player.inventory);
+        document.getElementById(span_id).innerHTML = parseInt(quantity);
+      }
+    }
+  }
+
+
+    /*
     console.log('Updating player inventory display');
     for (var i in this.inventory) {
       console.log(`Iterating player inventory(<${i}>).`);
       var item = this.inventory[i];
       console.log(item);
-      let element_id = String(`player_inventory_${item.symbol}_count_p`);
-      console.log(`Using element id <${element_id}> for updating inventory.`);
+      let paragraph_id = String(`player_inventory_${item.symbol}_count_p`);
+      let span_id = String(`player_inventory_${item.symbol}_count_span`);
+      //let span_id = String(`player.inventory['${item.symbol}']`);
+      console.log(`Using element id <${paragraph_id}> for updating inventory.`);
       console.log(item);
-      console.log(element_id);
-      if ($(`#${element_id}`).length === 0) {
-        console.log(`Creating element: <${element_id}>`);
-        let element = document.createElement(element_id);
-        element.innerHTML = `You have <span id=player_inventory_${item.symbol}_count_span></span> ${item.symbol}s`;
-        document.body.append(element);
+      console.log(paragraph_id);
+      console.log('logging document element length:');
+      console.log($(`#${paragraph_id}`).length);
+      if ($(`#${paragraph_id}`).length === 0) {
+        console.log(`Creating document element: <${paragraph_id}>`);
+        let div = document.getElementById('player_inventory_div');
+        let paragraph = document.createElement(paragraph_id);
+        paragraph.setAttribute('id', paragraph_id);
+        //paragraph.innerHTML = `You have <span id=player_inventory_${item.symbol}_count_span></span> ${item.symbol}s`;
+        paragraph.innerHTML = `You have <span id=${span_id}></span> ${item.symbol} molecules`;
+        div.appendChild(paragraph);
+        document.getElementById(span_id).innerHTML = 1;
         let br = document.createElement("br");
-        document.body.append(br);
+        div.appendChild(br);
       }
-    }
-  }
+      else {
+        console.log('Attempting to update pre-existing inventory value');
+        console.log(player.inventory);
+      */
+        /*
+        //let existing_value = parseInt(document.getElementById(span_id).value);
+        let existing_value = parseInt(document.getElementById(span_id).innerHTML);
+        console.log(existing_value);
+        let value = parseInt(existing_value,10);
+        console.log(value);
+        value += 1;
+        console.log(value);
+        //existing_value += 1;
+        //existing_value = existing_value?existing_value:0;
+        document.getElementById(span_id).innerHTML = Number(value);
+        console.log(document.getElementById(span_id).innerHTML);
+        //document.getElementById(span_id).innerHTML = player.inventory[`${item.symbol}`];
+        //document.getElementById(span_id).innerHTML += Number(1);
+        console.log(player.inventory);
+        */
+        //let span = document.getElementById(span_id);
+        //console.log(span);
+        //console.log(span.innerHTML);
+        //let span_value = parseFloat(span.innerHTML);
+        //let span_value = parseInt(document.getElementById(span_id).innerText);
+        //let span_value = parseInt(document.getElementById(span_id).innerHTML);
+        //console.log(span_value);
+        //span_value++;
+        //console.log(span_value);
+        //document.getElementById(span_id).innerHTML = span_value + 1;
+        //document.getElementById(span_id).innerText = span_value + 1;
+
+        //document.getElementById(span_id).innerHTML = parseInt(parseInt(document.getElementById(span_id).innerHTML) + 1);
+        //$(`.${span_id}`).html(parseInt($(`.${span_id}`).html(), 10) +1);
+
+        //let incremented_value = parseInt($(`.${span_id}`).text())+1;
+        //$(`.${span_id}`).text(incremented_value);
+
+        //let new_value = String(parseInt(document.getElementById(span_id)) + 1);
+        //console.log(new_value);
+        //document.getElementById(span_id).innerHTML = new_value;
+        //document.getElementById(span_id).value = span_value + 1;
+        //document.getElementById(span_id).innerHTML = 2;
+        //console.log(span_value);
+        //console.log(span.innerHTML);
+
+        //console.log(document.getElementById(span_id));
+        //console.log(document.getElementById(span_id).innerHTML);
+        //console.log(parseInt(document.getElementById(span_id).innerHTML));
+
+
+      //}
+    //}
+  //}
 
   update_goop_counts() {
     var count = {
@@ -602,7 +741,22 @@ function random_choice_from_array(arr){
 
 function append_to_molecular_symbol(symbol, character) {
   console.log(`Appending <${character}> to molecular symbol <${symbol}>...`);
-  return symbol + character;
+  if (symbol.includes(character)) {
+    //let new_symbol = symbol.slice(0, symbol.indexOf(character)), b, a.slice(position)].join('');
+    let index_of_existing_character = symbol.indexOf(character);
+    // If next character is a number
+    if (!isNaN(symbol[index_of_existing_character + 1] * 1)) {
+      parseInt(symbol[index_of_existing_character + 1] += 1);
+    } 
+    else {
+      symbol = [symbol.slice(0, index_of_existing_character + 1), 2, symbol.slice(index_of_existing_character + 1)].join('');
+    }
+
+  }
+  else {
+    symbol = symbol + character;
+  }
+  return symbol;
 }
 
 function test_random_element() {
@@ -677,7 +831,10 @@ function convert_hill_notation_to_molecule(notation) {
     for (var j=0; j < quantity; j++) {
       console.log('Pushing new atom into ingredients.');
       //let atom = new Atom(convert_hill_notation_to_element(hill_symbol));
-      let atom = convert_hill_notation_to_element(hill_symbol);
+
+      //let atom = convert_hill_notation_to_element(hill_symbol);
+      let atom = new Atom(hill_symbol);
+
       console.log(atom);
       ingredients.push(atom);
       console.log(ingredients);
@@ -690,6 +847,7 @@ function convert_hill_notation_to_molecule(notation) {
   return molecule;
 }
 
+/*
 function convert_hill_notation_to_element(hill_notation) {
   console.log('Attempting to convert hill notation to element');
   console.log(hill_notation);
@@ -715,6 +873,7 @@ function convert_hill_notation_to_element(hill_notation) {
   return atom;
 
 }
+*/
 
 
   /*
